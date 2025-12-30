@@ -4873,4 +4873,28 @@ if (document.readyState === 'loading') {
   });
 })();
 
+(function initRequestPaymentEntryGate() {
+  const modal = document.getElementById('addCustomerModal');
+  const openModal = () => {
+    if (!modal) return;
+    if (typeof window.__openModal === 'function') {
+      window.__openModal(modal);
+    } else {
+      modal.setAttribute('aria-hidden', 'false');
+      document.documentElement.classList.add('modal-open');
+      document.body.classList.add('modal-open');
+    }
+  };
+
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('[data-request-payment-entry]');
+    if (!trigger) return;
+    const state = typeof getPrototypeState === 'function' ? getPrototypeState() : PROTOTYPE_STATE_MIN;
+    if (state <= 1) {
+      e.preventDefault();
+      openModal();
+    }
+  });
+})();
+
 

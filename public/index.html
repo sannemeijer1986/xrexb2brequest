@@ -252,7 +252,7 @@
           </a>
         </li>
         <li>
-          <a href="#" class="qa__item">
+          <a href="#" class="qa__item" data-request-payment-entry>
             <div class="qa__icon"><img src="assets/icon_requestpayment_blue.svg" alt="" /></div>
             <span class="qa__content">Request payment<small class="muted">Request payments from external customers</small></span>
             <img class="qa__chev" src="assets/icon_chevron_right.svg" alt="" width="20" height="20" />
@@ -305,6 +305,35 @@
           <div class="modal__footer">
             <button type="button" class="btn btn--secondary btn--md" data-modal-close>Not now</button>
             <a class="btn btn--primary btn--md" href="add-bank.html">Add counterparty account</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="addCustomerModal" class="modal modal--dialog" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="addCustomerTitle">
+      <div class="modal__dialog">
+        <div class="modal__content">
+          <div class="modal__header">
+            <button class="modal__close" data-modal-close aria-label="Close modal">
+              <img src="assets/icon_close.svg" width="24" height="24" alt="close" />
+            </button>
+          </div>
+          <div class="modal__body">
+            <h2 id="addCustomerTitle" class="modal__title">Add customer</h2>
+            <p class="modal__desc">
+              To continue, add a new customer. We’ll generate a customer number and invitation link for you to share with the customer.
+            </p>
+            <p class="modal__desc">
+              Once the customer provides basic business information and payment method(s), you can request payments.
+            </p>
+            <div class="m-info">
+              <span class="mi-icon" aria-hidden="true"></span>
+              <span>Please note that verification may take 1–4 business days after the customer submits their information.</span>
+            </div>
+          </div>
+          <div class="modal__footer">
+            <button type="button" class="btn btn--secondary btn--md" data-modal-close>Cancel</button>
+            <a class="btn btn--primary btn--md" href="add-customer.html">Add customer</a>
           </div>
         </div>
       </div>
