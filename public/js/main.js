@@ -28,13 +28,14 @@ const PROTOTYPE_STATE_KEY = 'xrexb2b.state.v1';
 const ADD_BANK_RETURN_KEY = 'xrexb2b.addBankReturnUrl';
 const SEND_PAYMENT_RETURN_KEY = 'xrexb2b.sendPaymentReturnUrl';
 const PROTOTYPE_STATE_MIN = 1;
-const PROTOTYPE_STATE_MAX = 5;
+const PROTOTYPE_STATE_MAX = 6;
 const PROTOTYPE_STATE_LABELS = {
-  1: 'No counterparty',
-  2: 'Under review',
-  3: 'Approved',
-  4: 'Payment submitted',
-  5: 'Payment sent',
+  1: 'No customers',
+  2: 'Customer invited',
+  3: 'Customer verified',
+  4: 'PayReq submitted',
+  5: 'PayLynk ready',
+  6: 'Payment received',
 };
 
 const REVIEW_SUPPORT_LINK_HTML = '<a href="#" target="_blank" rel="noopener noreferrer">Contact Support</a>';
@@ -420,6 +421,7 @@ function initSendPayment() {
       if (!paymentList) return;
       const li = paymentList.querySelector('.transactions__item');
       if (!li) return;
+      const isSendPanel = panel.getAttribute('data-panel') === 'payment-send';
 
       const titleEl = li.querySelector('.transactions__item-title');
       const amountEl = li.querySelector('.transactions__cell--amount');
@@ -428,8 +430,7 @@ function initSendPayment() {
       const statusEls = li.querySelectorAll('.transactions__item-status');
       const dateEl = li.querySelector('.transactions__cell--date');
 
-      // States 1-3: single row showing "No data"
-      if (state <= 3) {
+      const setNoData = () => {
         if (titleEl) {
           titleEl.textContent = 'No data';
           titleEl.style.color = '#797A7B';
@@ -439,6 +440,17 @@ function initSendPayment() {
         if (purposeSubEl) purposeSubEl.textContent = '';
         if (dateEl) dateEl.textContent = '';
         statusEls.forEach((el) => { if (el) el.textContent = ''; el && el.classList.remove('transactions__item-status--processing', 'transactions__item-status--completed'); });
+      };
+
+      // "Send payment" panel always shows "No data", regardless of state
+      if (isSendPanel) {
+        setNoData();
+        return;
+      }
+
+      // States 1-3: "No data"
+      if (state <= 3) {
+        setNoData();
         return;
       }
 
