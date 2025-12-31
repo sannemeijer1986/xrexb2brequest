@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>XREX Pay - Add counterparty bank account</title>
+    <title>XREX Pay - Add customer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -35,8 +35,8 @@
         <section class="page__header page__header--crumb">
           <a class="crumb" href="select-counterparty.html" id="abBackLink" aria-label="Back">
             <picture>
-              <source media="(min-width: 1280px)" srcset="assets/icon_header_back.svg" />
-              <img src="assets/icon_header_back_mobile.svg" width="32" height="32" alt="">
+              <source media="(min-width: 1280px)" srcset="assets/icon_close.svg" />
+              <img src="assets/icon_close_blue.svg" width="32" height="32" alt="">
             </picture>
           </a>
           <h1 id="ab-back-title" class="page__title">Add customer</h1>
@@ -57,19 +57,21 @@
                 <div class="form__field">
                   <label for="email">Contact email address</label>
                   <input id="email" name="email" type="email" placeholder="Enter contact email" />
-                  <p style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; color: #73a2f5; margin-top: 4px; margin-bottom: 0;">Ensure the customer can access this email</p>
+                  <p>Ensure the customer can access this email</p>
                 </div>
-              </div>
-              <div class="form__actions">
-                <button id="ab-cancel-step1" class="btn btn--secondary btn--md" type="button">Cancel</button>
-                <button id="ab-next" class="btn btn--primary btn--md" type="button" disabled aria-disabled="true">Next</button>
               </div>
             </form>
             
+            <!-- Step 1 Actions -->
+            <div class="form__actions" id="step1-actions">
+              <button id="ab-cancel-step1" class="btn btn--secondary btn--md" type="button">Cancel</button>
+              <button id="ab-next" class="btn btn--primary btn--md" type="button" disabled aria-disabled="true">Next</button>
+            </div>
+            
             <!-- Step 2: Review & create invitation link -->
             <form id="step2-form" class="card card--section form" aria-label="Review & create invitation link" hidden>
-              <div class="step3-card__header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
-                <h3 class="step3-card__title" style="margin: 0;">Customer information</h3>
+              <div class="step3-card__header">
+                <h3 class="step3-card__title">Customer information</h3>
                 <button id="ab-edit-step1-from-step2" type="button" class="step3-card__edit">Edit</button>
               </div>
               <div class="step3-card__body">
@@ -80,58 +82,60 @@
                   </div>
                   <div class="step3-kv__row">
                     <span class="step3-kv__label">Contact email address</span>
-                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-                      <span class="step3-kv__value" id="step2-email" style="text-align: right;">-</span>
-                      <span style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; color: #73a2f5; text-align: right;">Ensure customer can access this email</span>
+                    <div id="step2-email-wrapper">
+                      <span class="step3-kv__value" id="step2-email">-</span>
+                      <span class="step2-email-note">Ensure customer can access this email</span>
                     </div>
                   </div>
                 </div>
               </div>
-              <div style="margin-top: 32px;">
-                <div style="margin-bottom: 16px;">
-                  <h4 style="font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 16px; color: #2D2F2F; margin: 0 0 16px 0;">How it works</h4>
-                  <div style="background: #FCFCFC; border-radius: 8px; padding: 20px 24px;">
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                      <div style="display: flex; gap: 16px; align-items: center; min-height: 40px;">
-                        <div style="width: 24px; height: 24px; flex-shrink: 0;">
-                          <img src="assets/icon_plus_blue.svg" alt="" width="24" height="24" style="display: block;" />
+              <div class="step2-how-it-works">
+                <div class="step2-how-it-works__container">
+                  <h4 class="step2-how-it-works__title">How it works</h4>
+                  <div class="step2-how-it-works__card">
+                    <div class="step2-how-it-works__list">
+                      <div class="step2-how-it-works__item">
+                        <div class="step2-how-it-works__icon">
+                          <img src="assets/ac-icon-1.svg" alt="" width="24" height="24" />
                         </div>
-                        <p style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; color: #2D2F2F; margin: 0; flex: 1;">Create a customer invitation link</p>
+                        <p class="step2-how-it-works__text">Create a customer invitation link</p>
                       </div>
-                      <div style="height: 1px; background: #EEEEEE;"></div>
-                      <div style="display: flex; gap: 16px; align-items: center; min-height: 40px;">
-                        <div style="width: 24px; height: 24px; flex-shrink: 0;">
-                          <img src="assets/icon_copy.svg" alt="" width="24" height="24" style="display: block;" />
+                      <div class="step2-how-it-works__divider"></div>
+                      <div class="step2-how-it-works__item">
+                        <div class="step2-how-it-works__icon">
+                          <img src="assets/ac-icon-2.svg" alt="" width="24" height="24" />
                         </div>
-                        <p style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; color: #2D2F2F; margin: 0; flex: 1;">Share the link with customer</p>
+                        <p class="step2-how-it-works__text">Share the link with customer</p>
                       </div>
-                      <div style="height: 1px; background: #EEEEEE;"></div>
-                      <div style="display: flex; gap: 16px; align-items: center; min-height: 40px;">
-                        <div style="width: 24px; height: 24px; flex-shrink: 0;">
-                          <img src="assets/icon_document.svg" alt="" width="24" height="24" style="display: block;" />
+                      <div class="step2-how-it-works__divider"></div>
+                      <div class="step2-how-it-works__item">
+                        <div class="step2-how-it-works__icon">
+                          <img src="assets/ac-icon-3.svg" alt="" width="24" height="24" />
                         </div>
-                        <p style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; color: #2D2F2F; margin: 0; flex: 1;">Customer fills in business details and payment preferences</p>
+                        <p class="step2-how-it-works__text">Customer fills in business details and payment preferences</p>
                       </div>
-                      <div style="height: 1px; background: #EEEEEE;"></div>
-                      <div style="display: flex; gap: 16px; align-items: center; min-height: 40px;">
-                        <div style="width: 24px; height: 24px; flex-shrink: 0;">
-                          <img src="assets/icon_check_on.svg" alt="" width="24" height="24" style="display: block;" />
+                      <div class="step2-how-it-works__divider"></div>
+                      <div class="step2-how-it-works__item">
+                        <div class="step2-how-it-works__icon">
+                          <img src="assets/ac-icon-4.svg" alt="" width="24" height="24" />
                         </div>
-                        <p style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; color: #2D2F2F; margin: 0; flex: 1;">Once they finish and are verified, you can send payment requests</p>
+                        <p class="step2-how-it-works__text">Once they finish and are verified, you can send payment requests</p>
                       </div>
                     </div>
                   </div>
                 </div>
-                <p style="font-family: 'Manrope', sans-serif; font-weight: 600; font-size: 14px; color: #73a2f5; text-align: right; margin: 0;">Customer verification takes 1–4 business days</p>
-              </div>
-              
-              <p style="font-family: 'Manrope', sans-serif; font-weight: 400; font-size: 12px; color: #797A7B; text-align: right; margin: 16px 0 0 0;">By creating this invitation link, you accept XYZ</p>
-              
-              <div class="form__actions" style="margin-top: 32px;">
-                <button id="ab-back" class="btn btn--secondary btn--md" type="button">Back</button>
-                <button id="ab-next-step2" class="btn btn--primary btn--md" type="button">Create customer invitation link</button>
+                <p id="step2-verification-text">Customer verification takes 1–4 business days</p>
               </div>
             </form>
+            
+            <!-- Step 2 Footer Text -->
+            <p id="step2-footer-text" hidden>By creating this invitation link, you accept XYZ</p>
+            
+            <!-- Step 2 Actions -->
+            <div class="form__actions" id="step2-actions" hidden>
+              <button id="ab-back" class="btn btn--secondary btn--md" type="button">Back</button>
+              <button id="ab-next-step2" class="btn btn--primary btn--md" type="button">Create customer invitation link</button>
+            </div>
 
             <!-- Step 3: Review & create invitation link -->
             <section id="step3-summary" class="step3-summary" aria-label="Review & create invitation link" hidden>
@@ -273,10 +277,9 @@
                     <div class="ab-step__title">Customer information</div>
                   </div>
                 </div>
-                <div class="ab-step has-line" id="step-indicator-2" data-step="2">
+                <div class="ab-step" id="step-indicator-2" data-step="2">
                   <div class="ab-step__rail">
                     <span class="ab-dot"></span>
-                    <span class="ab-line"></span>
                   </div>
                   <div class="ab-step__content">
                     <div class="ab-step__label">Step 2</div>
@@ -575,12 +578,12 @@
             </button>
           </div>
           <div class="modal__body">
-            <h2 id="cancelConfirmTitle" class="modal__title">Attention</h2>
-            <p class="modal__desc">The counterparty account setup is incomplete. Do you want to cancel anyway?</p>
+            <h2 id="cancelConfirmTitle" class="modal__title">Close without saving</h2>
+            <p class="modal__desc">Cancel now and your progress won’t be saved.</p>
           </div>
                   <div class="modal__footer">
-                    <button type="button" class="btn btn--secondary btn--md" id="cancelConfirmContinue">Continue setup</button>
-                    <button type="button" class="btn btn--alert btn--md" id="cancelConfirmCancel">Cancel</button>
+                    <button type="button" class="btn btn--secondary btn--md" id="cancelConfirmContinue">Back</button>
+                    <button type="button" class="btn btn--alert btn--md" id="cancelConfirmCancel">Close without saving</button>
                   </div>
         </div>
       </div>
@@ -786,9 +789,9 @@
     </div>
     
     <div class="build-badge" role="note">
-      <a id="ab-fill" href="#" style="color:#fff; text-decoration:underline; margin-left:8px;">Fill</a>
-      <span style="opacity:.7">&nbsp;/&nbsp;</span>
-      <a id="ab-clear" href="#" style="color:#fff; text-decoration:underline;">Clear</a>
+      <a id="ab-fill" href="#">Fill</a>
+      <span>&nbsp;/&nbsp;</span>
+      <a id="ab-clear" href="#">Clear</a>
     </div>
   </body>
   </html>

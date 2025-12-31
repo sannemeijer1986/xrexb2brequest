@@ -36,23 +36,18 @@
   align-items: center;
   justify-content: space-between;
   gap: 32px;
-  margin-bottom: 32px;
-
-  @media (min-width: $bp-desktop) {
-    margin-bottom: 32px;
-  }
 }
 
 .step3-card__title {
   font-family: $font-family-sans;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 18px;
   color: $text-primary;
   margin: 0;
   flex: 1;
 
   @media (min-width: $bp-desktop) {
-    font-size: 20px;
+    font-size: 22px;
   }
 }
 
@@ -413,6 +408,410 @@
         font-size: 14px;
       }
     }
+  }
+
+  // Customer submitted page specific styles
+  .page--customer-submitted {
+    .cp-submitted__title {
+      @media (max-width: ($bp-desktop - 1px)) {
+        font-size: 26px;
+        font-weight: 700;
+      }
+    }
+
+    .cp-submitted__steps {
+      padding: 16px 0;
+      gap: 0;
+    }
+
+    .cp-step {
+      padding-bottom: 32px;
+      min-height: 44px;
+
+      @media (min-width: $bp-desktop) {
+        min-height: 60px;
+      }
+
+      &:last-child {
+        padding-bottom: 0;
+      }
+    }
+
+    .cp-step__rail {
+      @media (max-width: ($bp-desktop - 1px)) {
+        width: 44px;
+      }
+    }
+
+    .cp-step__node-wrap {
+      @media (max-width: ($bp-desktop - 1px)) {
+        width: 44px;
+        height: 44px;
+
+        img {
+          width: 26px;
+          height: 26px;
+        }
+      }
+    }
+
+    .cp-step__label {
+      font-family: $font-family-sans;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 0;
+
+      @media (min-width: $bp-desktop) {
+        font-size: 16px;
+      }
+
+      &--next {
+        color: #73a2f5;
+      }
+    }
+
+    .cp-step--done .cp-step__label {
+      color: #3fae64;
+    }
+
+    .cp-step__title {
+      margin-top: 0;
+      font-size: 16px;
+
+      @media (min-width: $bp-desktop) {
+        font-size: 18px;
+      }
+    }
+
+    .cp-step--active .cp-step__title {
+      font-weight: 700;
+    }
+
+    .cp-step--done .cp-step__title {
+      font-weight: 700;
+    }
+
+    .cp-submitted__divider {
+      height: 1px;
+      background: #eeeeee;
+      width: 100%;
+    }
+
+    .cp-submitted__link-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-top: 8px;
+
+      @media (max-width: ($bp-desktop - 1px)) {
+        padding-bottom: 24px;
+      }
+    }
+
+    .cp-submitted__link-title {
+      font-family: $font-family-sans;
+      font-weight: 700;
+      font-size: 16px;
+      color: $text-primary;
+      margin: 0;
+
+      @media (min-width: $bp-desktop) {
+        font-size: 18px;
+      }
+    }
+
+    .cp-submitted__link-wrapper {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      min-height: 60px;
+      padding: 16px;
+      background: #f8f8f8;
+      border: 1px solid #3f78ff;
+      border-radius: 8px;
+    }
+
+    .cp-submitted__link-content {
+      flex: 1 1 0;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .cp-submitted__link-text {
+      font-family: $font-family-sans;
+      font-weight: 600;
+      font-size: 14px;
+      color: $text-primary;
+      word-break: break-all;
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      @media (min-width: $bp-desktop) {
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+
+    .cp-submitted__copy-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 0 16px;
+      background: #3f78ff;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      font-family: $font-family-sans;
+      font-weight: 700;
+      font-size: 12px;
+      color: #ffffff;
+      white-space: nowrap;
+      flex-shrink: 0;
+      height: 32px;
+      transition: opacity 0.15s ease, transform 0.02s ease;
+
+      @media (min-width: $bp-desktop) {
+        min-width: 100px;
+      }
+
+      @media (max-width: ($bp-desktop - 1px)) {
+        padding: 0;
+        width: 32px;
+        min-width: 32px;
+        border-radius: 16px;
+        background: #ebf2ff;
+        color: #3f78ff;
+
+        img {
+          filter: brightness(0) saturate(100%) invert(40%) sepia(95%) saturate(2084%) hue-rotate(210deg) brightness(105%) contrast(101%);
+        }
+
+        span {
+          display: none;
+        }
+      }
+
+      img {
+        display: block;
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+
+      &:hover {
+        opacity: 0.9;
+      }
+
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+
+    .cp-submitted__link-note {
+      font-family: $font-family-sans;
+      font-weight: 600;
+      font-size: 14px;
+      color: #73a2f5;
+      text-align: left;
+      margin: 0;
+
+      &--desktop {
+        display: none;
+        @media (min-width: $bp-desktop) {
+          display: inline;
+        }
+      }
+
+      &--mobile {
+        display: inline;
+        @media (min-width: $bp-desktop) {
+          display: none;
+        }
+      }
+    }
+
+    .cp-submitted__actions {
+      @media (max-width: ($bp-desktop - 1px)) {
+        padding-top: 0;
+      }
+
+      @media (min-width: $bp-desktop) {
+        padding-top: 16px;
+        padding-bottom: 32px;
+        margin-top: 0;
+      }
+    }
+  }
+}
+
+// Add Customer page specific styles
+.page--addcustomer {
+  // Step 1 email note
+  #step1-form .form__field p {
+    font-family: $font-family-sans;
+    font-weight: 600;
+    font-size: 14px;
+    color: #73a2f5;
+    margin-top: 4px;
+    margin-bottom: 0;
+  }
+
+  // Step 1 & Step 2 actions (outside forms)
+  #step1-actions,
+  #step2-actions {
+    margin-top: 32px;
+    border-top: none;
+    padding-top: 0;
+
+    @media (max-width: ($bp-desktop - 1px)) {
+      flex-direction: column-reverse;
+      gap: 16px;
+
+      .btn {
+        width: 100%;
+      }
+    }
+  }
+
+  // Step 2 card header
+  #step2-form .step3-card__header {
+
+
+    .step3-card__title {
+      margin: 0;
+    }
+  }
+
+  // Step 2 kv gap on desktop
+  #step2-form .step3-kv {
+    @media (min-width: $bp-desktop) {
+      gap: 32px !important;
+    }
+  }
+
+  // Step 2 email wrapper
+  #step2-email-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+
+    @media (max-width: ($bp-desktop - 1px)) {
+      align-items: flex-start;
+    }
+  }
+
+  // Step 2 email value
+  #step2-email {
+    @media (max-width: ($bp-desktop - 1px)) {
+      text-align: left !important;
+    }
+  }
+
+  // Step 2 email note
+  .step2-email-note {
+    font-family: $font-family-sans;
+    font-weight: 600;
+    font-size: 14px;
+    color: #73a2f5;
+  }
+
+  // Step 2 How it works section
+  .step2-how-it-works {
+    margin-top: 32px;
+
+    &__container {
+      margin-bottom: 16px;
+    }
+
+    &__title {
+      font-family: $font-family-sans;
+      font-weight: 700;
+      font-size: 16px;
+      color: #2D2F2F;
+      margin: 0 0 16px 0;
+    }
+
+    &__card {
+      background: #FCFCFC;
+      border-radius: 8px;
+      padding: 20px 24px;
+    }
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    &__item {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      min-height: 40px;
+    }
+
+    &__icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+
+      img {
+        display: block;
+      }
+    }
+
+    &__text {
+      font-family: $font-family-sans;
+      font-weight: 600;
+      font-size: 14px;
+      color: #2D2F2F;
+      margin: 0;
+      flex: 1;
+    }
+
+    &__divider {
+      height: 1px;
+      background: #EEEEEE;
+    }
+  }
+
+  // Step 2 verification text
+  #step2-verification-text {
+    font-family: $font-family-sans;
+    font-weight: 600;
+    font-size: 14px;
+    color: #73a2f5;
+    text-align: right;
+    margin: 0;
+
+    @media (max-width: ($bp-desktop - 1px)) {
+      text-align: center;
+    }
+  }
+
+  // Step 2 footer text
+  #step2-footer-text {
+    font-family: $font-family-sans;
+    font-weight: 400;
+    font-size: 12px;
+    color: #797A7B;
+    text-align: right;
+    margin: 16px 0 0 0;
+
+    @media (max-width: ($bp-desktop - 1px)) {
+      text-align: center;
+    }
+  }
+
+  // Step indicator 2 - remove bottom margin
+  #step-indicator-2 .ab-step__content {
+    margin-bottom: 0;
   }
 }
 

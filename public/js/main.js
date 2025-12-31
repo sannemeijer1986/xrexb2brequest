@@ -3049,6 +3049,11 @@ if (document.readyState === 'loading') {
   
   // Show step
   const showStep = (step) => {
+    const isAddCustomer = root.classList.contains('page--addcustomer');
+    const step1Actions = document.getElementById('step1-actions');
+    const step2Actions = document.getElementById('step2-actions');
+    const step2FooterText = document.getElementById('step2-footer-text');
+    
     if (step === 1) {
       step1Form.removeAttribute('hidden');
       step1Form.style.display = '';
@@ -3056,6 +3061,22 @@ if (document.readyState === 'loading') {
       step2Form.style.display = 'none';
       step3Summary.setAttribute('hidden', '');
       step3Summary.style.display = 'none';
+      
+      // Show/hide action buttons and footer text for add-customer
+      if (isAddCustomer) {
+        if (step1Actions) {
+          step1Actions.removeAttribute('hidden');
+          step1Actions.style.display = '';
+        }
+        if (step2Actions) {
+          step2Actions.setAttribute('hidden', '');
+          step2Actions.style.display = 'none';
+        }
+        if (step2FooterText) {
+          step2FooterText.setAttribute('hidden', '');
+          step2FooterText.style.display = 'none';
+        }
+      }
     } else if (step === 2) {
       step1Form.setAttribute('hidden', '');
       step1Form.style.display = 'none';
@@ -3063,6 +3084,22 @@ if (document.readyState === 'loading') {
       step2Form.style.display = '';
       step3Summary.setAttribute('hidden', '');
       step3Summary.style.display = 'none';
+      
+      // Show/hide action buttons and footer text for add-customer
+      if (isAddCustomer) {
+        if (step1Actions) {
+          step1Actions.setAttribute('hidden', '');
+          step1Actions.style.display = 'none';
+        }
+        if (step2Actions) {
+          step2Actions.removeAttribute('hidden');
+          step2Actions.style.display = '';
+        }
+        if (step2FooterText) {
+          step2FooterText.removeAttribute('hidden');
+          step2FooterText.style.display = '';
+        }
+      }
     } else if (step === 3) {
       step1Form.setAttribute('hidden', '');
       step1Form.style.display = 'none';
@@ -3070,6 +3107,22 @@ if (document.readyState === 'loading') {
       step2Form.style.display = 'none';
       step3Summary.removeAttribute('hidden');
       step3Summary.style.display = '';
+      
+      // Hide action buttons and footer text for add-customer (step 3 doesn't exist)
+      if (isAddCustomer) {
+        if (step1Actions) {
+          step1Actions.setAttribute('hidden', '');
+          step1Actions.style.display = 'none';
+        }
+        if (step2Actions) {
+          step2Actions.setAttribute('hidden', '');
+          step2Actions.style.display = 'none';
+        }
+        if (step2FooterText) {
+          step2FooterText.setAttribute('hidden', '');
+          step2FooterText.style.display = 'none';
+        }
+      }
     }
     currentStep = step;
     updateStepIndicator(step);
@@ -3177,7 +3230,37 @@ if (document.readyState === 'loading') {
   if (nextBtnStep2) {
     nextBtnStep2.addEventListener('click', (e) => {
       e.preventDefault();
-      goToStep3();
+      const isAddCustomer = root.classList.contains('page--addcustomer');
+      
+      // For add-customer page, behave like submit button (Step 2 is final step)
+      if (isAddCustomer) {
+        try {
+          if (typeof window.getPrototypeState === 'function' && typeof window.setPrototypeState === 'function') {
+            const current = window.getPrototypeState();
+            if (current < 2) window.setPrototypeState(2);
+          }
+        } catch (_) {}
+        
+        // Show loading modal for 1.5s then redirect
+        const loading = document.getElementById('loadingModal');
+        if (loading) {
+          loading.setAttribute('aria-hidden', 'false');
+          document.documentElement.classList.add('modal-open');
+          document.body.classList.add('modal-open');
+          try {
+            const y = window.scrollY || window.pageYOffset || 0;
+            document.body.dataset.scrollY = String(y);
+            document.body.style.top = `-${y}px`;
+            document.body.classList.add('modal-locked');
+          } catch (_) {}
+        }
+        setTimeout(() => {
+          window.location.href = 'add-customer-submitted.html';
+        }, 1500);
+      } else {
+        // For add-bank page, go to step 3 as usual
+        goToStep3();
+      }
     });
   }
   
