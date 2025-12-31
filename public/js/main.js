@@ -2525,7 +2525,7 @@ if (document.readyState === 'loading') {
 
 // Add Bank: back crumb and title go to Select counterparty on tablet and below
 (function initAddBankBackNavigation() {
-  const isAddBank = document.querySelector('main.page--addbank');
+  const isAddBank = document.querySelector('main.page--addbank, main.page--addcustomer');
   if (!isAddBank) return;
   const crumb = document.querySelector('.page__header--crumb .crumb');
   const title = document.getElementById('ab-back-title');
@@ -2538,9 +2538,12 @@ if (document.readyState === 'loading') {
     if (window.innerWidth < DESKTOP_BP) {
       // On mobile, check if we're on step 2+ via the steps handler
       const step2Form = document.getElementById('step2-form');
+      const step1Form = document.getElementById('step1-form');
+      const isStep1 = step1Form && !step1Form.hasAttribute('hidden') && step1Form.style.display !== 'none';
+      
       if (step2Form && !step2Form.hasAttribute('hidden')) {
+        // Step 2+, show modal
         e.preventDefault();
-        // Trigger the modal via the steps handler
         const cancelModal = document.getElementById('cancelConfirmModal');
         if (cancelModal) {
           cancelModal.setAttribute('aria-hidden', 'false');
@@ -2552,6 +2555,16 @@ if (document.readyState === 'loading') {
             document.body.style.top = `-${y}px`;
             document.body.classList.add('modal-locked');
           } catch (_) {}
+        }
+      } else if (isStep1) {
+        // Step 1, navigate back using the back link href
+        e.preventDefault();
+        const backLink = document.getElementById('abBackLink');
+        if (backLink && backLink.href) {
+          window.location.href = backLink.href;
+        } else {
+          // Fallback to select-counterparty
+          window.location.href = 'select-counterparty.html';
         }
       }
     }
@@ -2767,7 +2780,7 @@ if (document.readyState === 'loading') {
 
 // Add Bank: Step navigation and state management
 (function initAddBankSteps() {
-  const root = document.querySelector('main.page--addbank');
+  const root = document.querySelector('main.page--addbank, main.page--addcustomer');
   if (!root) return;
   
   let currentStep = 1;
@@ -2787,6 +2800,8 @@ if (document.readyState === 'loading') {
   const submitBtnStep3 = document.getElementById('ab-submit-step3');
   const editStep1Btn = document.getElementById('ab-edit-step1');
   const editStep2Btn = document.getElementById('ab-edit-step2');
+  const editStep1FromStep2Btn = document.getElementById('ab-edit-step1-from-step2');
+  const cancelBtnStep1 = document.getElementById('ab-cancel-step1');
   
   if (!step1Form || !step2Form || !step3Summary) return;
 
@@ -2806,15 +2821,25 @@ if (document.readyState === 'loading') {
   
   // Store step 1 data
   const storeStep1Data = () => {
-    stepData.step1 = {
-      companyName: document.getElementById('companyName')?.value || '',
-      regDate: document.getElementById('regDate')?.value || '',
-      country: document.getElementById('country')?.value || '',
-      regNum: document.getElementById('regNum')?.value || '',
-      businessAddress: document.getElementById('businessAddress')?.value || '',
-      operationCountry: document.getElementById('operationCountry')?.value || '',
-      email: document.getElementById('email')?.value || ''
-    };
+    const isAddCustomer = document.querySelector('main.page--addcustomer');
+    if (isAddCustomer) {
+      // For add-customer page, only store companyName and email
+      stepData.step1 = {
+        companyName: document.getElementById('companyName')?.value || '',
+        email: document.getElementById('email')?.value || ''
+      };
+    } else {
+      // For add-bank page, store all fields
+      stepData.step1 = {
+        companyName: document.getElementById('companyName')?.value || '',
+        regDate: document.getElementById('regDate')?.value || '',
+        country: document.getElementById('country')?.value || '',
+        regNum: document.getElementById('regNum')?.value || '',
+        businessAddress: document.getElementById('businessAddress')?.value || '',
+        operationCountry: document.getElementById('operationCountry')?.value || '',
+        email: document.getElementById('email')?.value || ''
+      };
+    }
   };
 
   // Store step 2 data
@@ -2875,6 +2900,7 @@ if (document.readyState === 'loading') {
   const renderStep3Summary = () => {
     const s1 = stepData.step1 || {};
     const s2 = stepData.step2 || {};
+    const isAddCustomer = document.querySelector('main.page--addcustomer');
 
     const setText = (id, value) => {
       const el = document.getElementById(id);
@@ -2913,12 +2939,24 @@ if (document.readyState === 'loading') {
 
     // Step 1 fields
     setText('ab-summary-companyName', s1.companyName);
-    setText('ab-summary-regDate', formatDate(s1.regDate));
-    setText('ab-summary-country', s1.country);
-    setText('ab-summary-regNum', s1.regNum);
-    setText('ab-summary-businessAddress', s1.businessAddress);
-    setText('ab-summary-operationCountry', s1.operationCountry);
     setText('ab-summary-email', s1.email);
+    
+    if (isAddCustomer) {
+      // For add-customer page, only show companyName and email
+      // Hide other fields
+      setVisibility('ab-summary-regDate', false);
+      setVisibility('ab-summary-country', false);
+      setVisibility('ab-summary-regNum', false);
+      setVisibility('ab-summary-businessAddress', false);
+      setVisibility('ab-summary-operationCountry', false);
+    } else {
+      // For add-bank page, show all fields
+      setText('ab-summary-regDate', formatDate(s1.regDate));
+      setText('ab-summary-country', s1.country);
+      setText('ab-summary-regNum', s1.regNum);
+      setText('ab-summary-businessAddress', s1.businessAddress);
+      setText('ab-summary-operationCountry', s1.operationCountry);
+    }
 
     // Step 2 - bank details
     setText('ab-summary-accountNickname', s2.accountNickname || s2.accountNicknameSwift);
@@ -3041,6 +3079,20 @@ if (document.readyState === 'loading') {
   // Navigate to step 2
   const goToStep2 = () => {
     storeStep1Data();
+    // Populate Step 2 display fields with Step 1 data
+    const s1 = stepData.step1 || {};
+    const step2CompanyName = document.getElementById('step2-companyName');
+    const step2Email = document.getElementById('step2-email');
+    if (step2CompanyName) step2CompanyName.textContent = s1.companyName || '—';
+    if (step2Email) step2Email.textContent = s1.email || '—';
+    
+    // For add-customer page, ensure Step 2 button is enabled (it's a review step)
+    const isAddCustomer = root.classList.contains('page--addcustomer');
+    if (isAddCustomer && nextBtnStep2) {
+      nextBtnStep2.disabled = false;
+      nextBtnStep2.removeAttribute('aria-disabled');
+    }
+    
     showStep(2);
   };
 
@@ -3059,7 +3111,45 @@ if (document.readyState === 'loading') {
   
   // Handle header back button
   const handleHeaderBack = (e) => {
+    const DESKTOP_BP = 1280;
+    const isMobile = window.innerWidth < DESKTOP_BP;
+    
     if (currentStep > 1) {
+      e.preventDefault();
+      if (cancelModal) {
+        cancelModal.setAttribute('aria-hidden', 'false');
+        document.documentElement.classList.add('modal-open');
+        document.body.classList.add('modal-open');
+        try {
+          const y = window.scrollY || window.pageYOffset || 0;
+          document.body.dataset.scrollY = String(y);
+          document.body.style.top = `-${y}px`;
+          document.body.classList.add('modal-locked');
+        } catch (_) {}
+      }
+    } else if (currentStep === 1 && isMobile) {
+      // On step 1 mobile, allow normal navigation (don't prevent default)
+      // The href will handle navigation
+    }
+  };
+  
+  // Handle cancel button step 1
+  const handleCancelStep1 = (e) => {
+    const DESKTOP_BP = 1280;
+    const isMobile = window.innerWidth < DESKTOP_BP;
+    
+    if (isMobile) {
+      // On mobile, navigate back using the back link href
+      e.preventDefault();
+      const backLink = document.getElementById('abBackLink');
+      if (backLink && backLink.href) {
+        window.location.href = backLink.href;
+      } else {
+        // Fallback to select-counterparty
+        window.location.href = 'select-counterparty.html';
+      }
+    } else {
+      // On desktop, show cancel modal
       e.preventDefault();
       if (cancelModal) {
         cancelModal.setAttribute('aria-hidden', 'false');
@@ -3098,6 +3188,11 @@ if (document.readyState === 'loading') {
       goToStep1();
     });
   }
+  
+  // Cancel button step 1
+  if (cancelBtnStep1) {
+    cancelBtnStep1.addEventListener('click', handleCancelStep1);
+  }
 
   // Edit buttons in step 3
   if (editStep1Btn) {
@@ -3110,6 +3205,14 @@ if (document.readyState === 'loading') {
     editStep2Btn.addEventListener('click', (e) => {
       e.preventDefault();
       showStep(2);
+    });
+  }
+  
+  // Edit button in step 2 (goes back to step 1)
+  if (editStep1FromStep2Btn) {
+    editStep1FromStep2Btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showStep(1);
     });
   }
 
@@ -3230,7 +3333,16 @@ if (document.readyState === 'loading') {
   // Step 2 form validation
   const accountHolderName = document.getElementById('accountHolderName');
   if (nextBtnStep2 && accountHolderName) {
+    const isAddCustomer = root.classList.contains('page--addcustomer');
     const validateStep2 = () => {
+      // For add-customer page, Step 2 is just a review step, so always enable the button
+      if (isAddCustomer) {
+        nextBtnStep2.disabled = false;
+        nextBtnStep2.removeAttribute('aria-disabled');
+        return;
+      }
+      
+      // For add-bank page, validate all fields
       const hasName = accountHolderName.value && accountHolderName.value.trim() !== '';
       const bankDetailsFilled = document.getElementById('bankDetailsDisplay')?.style.display !== 'none';
       const accountDeclarationFilled = document.getElementById('accountDeclarationDisplay')?.style.display !== 'none';
@@ -3265,21 +3377,33 @@ if (document.readyState === 'loading') {
 
 // Add Bank: enable Next when all fields are filled (reusable helper)
 (function initAddBankFormState() {
-  const root = document.querySelector('main.page--addbank');
+  const root = document.querySelector('main.page--addbank, main.page--addcustomer');
   if (!root) return;
   const form = document.getElementById('step1-form');
   const nextBtn = document.getElementById('ab-next');
   if (!form || !nextBtn) return;
+  
+  const isAddCustomer = root.classList.contains('page--addcustomer');
 
-  const getFields = () => ([
-    form.querySelector('#companyName'),
-    form.querySelector('#regDate'),
-    form.querySelector('#regNum'),
-    form.querySelector('#country'),
-    form.querySelector('#businessAddress'),
-    form.querySelector('#operationCountry'),
-    form.querySelector('#email'),
-  ]);
+  const getFields = () => {
+    if (isAddCustomer) {
+      // For add-customer page, only check companyName and email
+      return [
+        form.querySelector('#companyName'),
+        form.querySelector('#email'),
+      ];
+    }
+    // For add-bank page, check all fields
+    return [
+      form.querySelector('#companyName'),
+      form.querySelector('#regDate'),
+      form.querySelector('#regNum'),
+      form.querySelector('#country'),
+      form.querySelector('#businessAddress'),
+      form.querySelector('#operationCountry'),
+      form.querySelector('#email'),
+    ];
+  };
 
   const setDisabled = (btn, disabled) => {
     btn.disabled = !!disabled;
@@ -3301,14 +3425,16 @@ if (document.readyState === 'loading') {
     const fields = getFields();
     const allOk = fields.every(isFilled);
     setDisabled(nextBtn, !allOk);
-    // toggle filled style for registration and operation country selects
-    const regCountrySel = form.querySelector('#country');
-    if (regCountrySel) {
-      regCountrySel.classList.toggle('is-filled', !!regCountrySel.value);
-    }
-    const opCountrySel = form.querySelector('#operationCountry');
-    if (opCountrySel) {
-      opCountrySel.classList.toggle('is-filled', !!opCountrySel.value);
+    // toggle filled style for registration and operation country selects (only for add-bank)
+    if (!isAddCustomer) {
+      const regCountrySel = form.querySelector('#country');
+      if (regCountrySel) {
+        regCountrySel.classList.toggle('is-filled', !!regCountrySel.value);
+      }
+      const opCountrySel = form.querySelector('#operationCountry');
+      if (opCountrySel) {
+        opCountrySel.classList.toggle('is-filled', !!opCountrySel.value);
+      }
     }
   };
 
@@ -3324,11 +3450,13 @@ if (document.readyState === 'loading') {
 
 // Add Bank: dev tools (Fill / Clear) in build-badge
 (function initAddBankDevTools() {
-  const root = document.querySelector('main.page--addbank');
+  const root = document.querySelector('main.page--addbank, main.page--addcustomer');
   if (!root) return;
   const fillBtn = document.getElementById('ab-fill');
   const clearBtn = document.getElementById('ab-clear');
   if (!fillBtn || !clearBtn) return;
+  
+  const isAddCustomer = root.classList.contains('page--addcustomer');
 
   // Get current active step
   const getCurrentStep = () => {
@@ -3344,15 +3472,25 @@ if (document.readyState === 'loading') {
   };
 
   // Get step 1 fields
-  const getStep1Fields = () => ({
-    companyName: document.getElementById('companyName'),
-    regDate: document.getElementById('regDate'),
-    country: document.getElementById('country'),
-    regNum: document.getElementById('regNum'),
-    businessAddress: document.getElementById('businessAddress'),
-    operationCountry: document.getElementById('operationCountry'),
-    email: document.getElementById('email'),
-  });
+  const getStep1Fields = () => {
+    if (isAddCustomer) {
+      // For add-customer page, only return companyName and email
+      return {
+        companyName: document.getElementById('companyName'),
+        email: document.getElementById('email'),
+      };
+    }
+    // For add-bank page, return all fields
+    return {
+      companyName: document.getElementById('companyName'),
+      regDate: document.getElementById('regDate'),
+      country: document.getElementById('country'),
+      regNum: document.getElementById('regNum'),
+      businessAddress: document.getElementById('businessAddress'),
+      operationCountry: document.getElementById('operationCountry'),
+      email: document.getElementById('email'),
+    };
+  };
 
   // Get step 2 fields
   const getStep2Fields = () => ({
@@ -3375,50 +3513,57 @@ if (document.readyState === 'loading') {
       // Fill step 1 fields
       const f = getStep1Fields();
       if (f.companyName) f.companyName.value = 'NovaQuill Ltd';
-      if (f.regDate) f.regDate.value = '2024-01-15';
-      if (f.country) f.country.value = 'Singapore';
-      if (f.regNum) f.regNum.value = '202401234N';
-      if (f.businessAddress) {
-        f.businessAddress.value = '5 Battery Road, Singapore 049901';
-        // Update icon after setting value
-        const businessAddressIcon = document.getElementById('businessAddressIcon');
-        if (businessAddressIcon) businessAddressIcon.src = 'assets/icon_edit.svg';
-      }
-      if (f.operationCountry) f.operationCountry.value = 'Singapore';
       if (f.email) f.email.value = 'accounts@novaquill.com';
-      Object.values(f).forEach(trigger);
       
-      // Also fill modal fields
-      const modal = document.getElementById('businessAddressModal');
-      if (modal) {
-        const addressCountry = modal.querySelector('#addressCountry');
-        const addressState = modal.querySelector('#addressState');
-        const addressCity = modal.querySelector('#addressCity');
-        const addressLine1 = modal.querySelector('#addressLine1');
-        const addressLine2 = modal.querySelector('#addressLine2');
-        const addressPostal = modal.querySelector('#addressPostal');
+      if (isAddCustomer) {
+        // For add-customer, only fill companyName and email
+        Object.values(f).forEach(trigger);
+      } else {
+        // For add-bank, fill all fields
+        if (f.regDate) f.regDate.value = '2024-01-15';
+        if (f.country) f.country.value = 'Singapore';
+        if (f.regNum) f.regNum.value = '202401234N';
+        if (f.businessAddress) {
+          f.businessAddress.value = '5 Battery Road, Singapore 049901';
+          // Update icon after setting value
+          const businessAddressIcon = document.getElementById('businessAddressIcon');
+          if (businessAddressIcon) businessAddressIcon.src = 'assets/icon_edit.svg';
+        }
+        if (f.operationCountry) f.operationCountry.value = 'Singapore';
+        Object.values(f).forEach(trigger);
         
-        if (addressCountry) addressCountry.value = 'Singapore';
-        if (addressState) addressState.value = 'Central Region';
-        if (addressCity) addressCity.value = 'Singapore';
-        if (addressLine1) addressLine1.value = '5 Battery Road';
-        if (addressLine2) addressLine2.value = 'Suite 1001';
-        if (addressPostal) addressPostal.value = '049901';
-        
-        // Trigger change events to update is-filled classes and validate
-        [addressCountry, addressState, addressCity, addressLine1, addressLine2, addressPostal].forEach((el) => {
-          if (el) {
-            el.dispatchEvent(new Event('input', { bubbles: true }));
-            el.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        });
-        
-        // Trigger validation for save button after a short delay to ensure events have fired
-        setTimeout(() => {
-          if (typeof window.updateBusinessAddressSaveButton === 'function') {
-            window.updateBusinessAddressSaveButton();
-          }
-        }, 10);
+        // Also fill modal fields
+        const modal = document.getElementById('businessAddressModal');
+        if (modal) {
+          const addressCountry = modal.querySelector('#addressCountry');
+          const addressState = modal.querySelector('#addressState');
+          const addressCity = modal.querySelector('#addressCity');
+          const addressLine1 = modal.querySelector('#addressLine1');
+          const addressLine2 = modal.querySelector('#addressLine2');
+          const addressPostal = modal.querySelector('#addressPostal');
+          
+          if (addressCountry) addressCountry.value = 'Singapore';
+          if (addressState) addressState.value = 'Central Region';
+          if (addressCity) addressCity.value = 'Singapore';
+          if (addressLine1) addressLine1.value = '5 Battery Road';
+          if (addressLine2) addressLine2.value = 'Suite 1001';
+          if (addressPostal) addressPostal.value = '049901';
+          
+          // Trigger change events to update is-filled classes and validate
+          [addressCountry, addressState, addressCity, addressLine1, addressLine2, addressPostal].forEach((el) => {
+            if (el) {
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          });
+          
+          // Trigger validation for save button after a short delay to ensure events have fired
+          setTimeout(() => {
+            if (typeof window.updateBusinessAddressSaveButton === 'function') {
+              window.updateBusinessAddressSaveButton();
+            }
+          }, 10);
+        }
       }
     } else if (currentStep === 2) {
       // Fill step 2 fields
@@ -3518,43 +3663,48 @@ if (document.readyState === 'loading') {
       // Clear step 1 fields
       const f = getStep1Fields();
       Object.values(f).forEach((el) => { if (el) el.value = ''; trigger(el); });
-      // Also clear business address and reset icon
-      const businessAddress = document.getElementById('businessAddress');
-      const businessAddressIcon = document.getElementById('businessAddressIcon');
-      if (businessAddress) businessAddress.value = '';
-      if (businessAddressIcon) businessAddressIcon.src = 'assets/icon_add.svg';
       
-      // Also clear modal fields
-      const modal = document.getElementById('businessAddressModal');
-      if (modal) {
-        const addressCountry = modal.querySelector('#addressCountry');
-        const addressState = modal.querySelector('#addressState');
-        const addressCity = modal.querySelector('#addressCity');
-        const addressLine1 = modal.querySelector('#addressLine1');
-        const addressLine2 = modal.querySelector('#addressLine2');
-        const addressPostal = modal.querySelector('#addressPostal');
+      if (isAddCustomer) {
+        // For add-customer, only clear companyName and email (already done above)
+      } else {
+        // For add-bank, also clear business address and reset icon
+        const businessAddress = document.getElementById('businessAddress');
+        const businessAddressIcon = document.getElementById('businessAddressIcon');
+        if (businessAddress) businessAddress.value = '';
+        if (businessAddressIcon) businessAddressIcon.src = 'assets/icon_add.svg';
         
-        if (addressCountry) addressCountry.value = '';
-        if (addressState) addressState.value = '';
-        if (addressCity) addressCity.value = '';
-        if (addressLine1) addressLine1.value = '';
-        if (addressLine2) addressLine2.value = '';
-        if (addressPostal) addressPostal.value = '';
-        
-        // Trigger change events to update is-filled classes and validate
-        [addressCountry, addressState, addressCity, addressLine1, addressLine2, addressPostal].forEach((el) => {
-          if (el) {
-            el.dispatchEvent(new Event('input', { bubbles: true }));
-            el.dispatchEvent(new Event('change', { bubbles: true }));
-          }
-        });
-        
-        // Trigger validation for save button after a short delay to ensure events have fired
-        setTimeout(() => {
-          if (typeof window.updateBusinessAddressSaveButton === 'function') {
-            window.updateBusinessAddressSaveButton();
-          }
-        }, 10);
+        // Also clear modal fields
+        const modal = document.getElementById('businessAddressModal');
+        if (modal) {
+          const addressCountry = modal.querySelector('#addressCountry');
+          const addressState = modal.querySelector('#addressState');
+          const addressCity = modal.querySelector('#addressCity');
+          const addressLine1 = modal.querySelector('#addressLine1');
+          const addressLine2 = modal.querySelector('#addressLine2');
+          const addressPostal = modal.querySelector('#addressPostal');
+          
+          if (addressCountry) addressCountry.value = '';
+          if (addressState) addressState.value = '';
+          if (addressCity) addressCity.value = '';
+          if (addressLine1) addressLine1.value = '';
+          if (addressLine2) addressLine2.value = '';
+          if (addressPostal) addressPostal.value = '';
+          
+          // Trigger change events to update is-filled classes and validate
+          [addressCountry, addressState, addressCity, addressLine1, addressLine2, addressPostal].forEach((el) => {
+            if (el) {
+              el.dispatchEvent(new Event('input', { bubbles: true }));
+              el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+          });
+          
+          // Trigger validation for save button after a short delay to ensure events have fired
+          setTimeout(() => {
+            if (typeof window.updateBusinessAddressSaveButton === 'function') {
+              window.updateBusinessAddressSaveButton();
+            }
+          }, 10);
+        }
       }
     } else if (currentStep === 2) {
       // Clear step 2 fields
