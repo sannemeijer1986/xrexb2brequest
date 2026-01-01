@@ -3722,8 +3722,15 @@ if (document.readyState === 'loading') {
     if (!el) return false;
     const v = (el.value || '').trim();
     if (el.type === 'email') {
-      // simple validity; rely on browser validation for complex cases
-      return el.validity.valid && v.length > 0;
+      // Relaxed email validation: allow typing in progress (e.g., trailing periods)
+      // Basic check: has @ and at least one character before and after
+      if (v.length === 0) return false;
+      const atIndex = v.indexOf('@');
+      if (atIndex <= 0 || atIndex >= v.length - 1) return false;
+      // Allow trailing periods and other characters during typing
+      // Just check that there's at least one non-@ character after the @
+      const afterAt = v.substring(atIndex + 1);
+      return afterAt.length > 0 && afterAt.replace(/[^a-zA-Z0-9.]/g, '').length > 0;
     }
     return v.length > 0;
   };

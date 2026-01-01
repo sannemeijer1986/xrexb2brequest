@@ -7117,7 +7117,6 @@ body.modal-locked {
 @media (min-width: 1280px) {
   .page--cp-submitted.page--customer-submitted .cp-submitted__actions {
     padding-top: 16px;
-    padding-bottom: 32px;
     margin-top: 0;
   }
 }
