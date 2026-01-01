@@ -411,7 +411,7 @@
   }
 
   // Customer submitted page specific styles
-  .page--customer-submitted {
+  &.page--customer-submitted {
     .cp-submitted__title {
       @media (max-width: ($bp-desktop - 1px)) {
         font-size: 26px;
@@ -425,7 +425,7 @@
     }
 
     .cp-step {
-      padding-bottom: 32px;
+
       min-height: 44px;
 
       @media (min-width: $bp-desktop) {
@@ -466,13 +466,17 @@
         font-size: 16px;
       }
 
+      &--done {
+        color: #3FAE64;
+      }
+
       &--next {
-        color: #73a2f5;
+        color: #73A2F5;
       }
     }
 
     .cp-step--done .cp-step__label {
-      color: #3fae64;
+      color: #3FAE64;
     }
 
     .cp-step__title {
@@ -525,11 +529,22 @@
       display: flex;
       gap: 16px;
       align-items: center;
-      min-height: 60px;
+      height: 64px;
+      width: 100%;
       padding: 16px;
-      background: #f8f8f8;
-      border: 1px solid #3f78ff;
+      background: #FFFFFF;
+      border: 1px solid #DBDBDC;
       border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+
+      &:hover {
+        opacity: 0.9;
+      }
+
+      &:active {
+        opacity: 0.8;
+      }
     }
 
     .cp-submitted__link-content {
@@ -584,12 +599,8 @@
         width: 32px;
         min-width: 32px;
         border-radius: 16px;
-        background: #ebf2ff;
-        color: #3f78ff;
-
-        img {
-          filter: brightness(0) saturate(100%) invert(40%) sepia(95%) saturate(2084%) hue-rotate(210deg) brightness(105%) contrast(101%);
-        }
+        background: #3F78FF;
+        color: #ffffff;
 
         span {
           display: none;
@@ -617,8 +628,12 @@
       font-weight: 600;
       font-size: 14px;
       color: #73a2f5;
-      text-align: left;
+      text-align: center;
       margin: 0;
+
+      @media (max-width: ($bp-desktop - 1px)) {
+        text-align: center;
+      }
 
       &--desktop {
         display: none;

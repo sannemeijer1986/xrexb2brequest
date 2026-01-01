@@ -45,7 +45,7 @@
                 <span class="cp-step__track"></span>
               </div>
               <div class="cp-step__content">
-                <div class="cp-step__label">Completed</div>
+                <div class="cp-step__label cp-step__label--done">Completed</div>
                 <div class="cp-step__title">Customer invitation link created</div>
               </div>
             </li>
@@ -54,7 +54,7 @@
               <div class="cp-step__rail">
                 <span class="cp-step__track"></span>
                 <div class="cp-step__node-wrap">
-                  <img src="assets/ac-icon-2.svg" alt="" width="26" height="26" class="cp-step__icon-img" />
+                  <img src="assets/outline_messagelink_new.svg" alt="" width="26" height="26" class="cp-step__icon-img" />
                 </div>
               </div>
               <div class="cp-step__content">
@@ -68,12 +68,12 @@
 
           <div class="cp-submitted__link-section">
             <h2 class="cp-submitted__link-title">Customer invitation link</h2>
-            <div class="cp-submitted__link-wrapper">
+            <div class="cp-submitted__link-wrapper" id="linkWrapper" role="button" tabindex="0" aria-label="Copy invitation link">
               <div class="cp-submitted__link-content">
                 <span class="cp-submitted__link-text" id="customerInvitationLink">xrexpay.io/invitation-business?type=1234567</span>
               </div>
               <button type="button" class="cp-submitted__copy-btn" id="copyInvitationLink" aria-label="Copy invitation link">
-                <img src="assets/icon_copy.svg" alt="" width="16" height="16" />
+                <img src="assets/icon_copy_white.svg" alt="" width="16" height="16" />
                 <span>Copy</span>
               </button>
             </div>
@@ -117,7 +117,7 @@
             } catch (_) {}
             try {
               if (typeof window.showSnackbar === 'function') {
-                window.showSnackbar('Invitation link copied to clipboard', 2000);
+                window.showSnackbar('Link copied to clipboard', 2000);
               }
             } catch (_) {}
           };
@@ -126,11 +126,32 @@
           if (copyBtn) {
             copyBtn.addEventListener('click', function(e) {
               e.preventDefault();
+              e.stopPropagation();
               copyInvitationLink();
+            });
+          }
+
+          var linkWrapper = document.getElementById('linkWrapper');
+          if (linkWrapper) {
+            linkWrapper.addEventListener('click', function(e) {
+              // Don't trigger if clicking the copy button
+              if (e.target.closest('.cp-submitted__copy-btn')) {
+                return;
+              }
+              copyInvitationLink();
+            });
+
+            // Support keyboard navigation
+            linkWrapper.addEventListener('keydown', function(e) {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                copyInvitationLink();
+              }
             });
           }
         } catch (_) {}
       })();
     </script>
+    <script defer src="js/main.js"></script>
   </body>
 </html>
