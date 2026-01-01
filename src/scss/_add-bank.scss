@@ -468,10 +468,12 @@
 
       &--done {
         color: #3FAE64;
+        font-weight: 700;
       }
 
       &--next {
         color: #73A2F5;
+        font-weight: 700;
       }
     }
 
@@ -536,10 +538,10 @@
       border: 1px solid #DBDBDC;
       border-radius: 8px;
       cursor: pointer;
-      transition: opacity 0.15s ease;
+      transition: background-color 0.15s ease, opacity 0.15s ease;
 
       &:hover {
-        opacity: 0.9;
+        background: #f1f5f9;
       }
 
       &:active {

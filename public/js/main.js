@@ -211,6 +211,57 @@ try {
   window.getPrototypeStateLabel = getPrototypeStateLabel;
 } catch (_) {}
 
+// Global header request button dropdown (desktop only)
+(function initHeaderRequestDropdown() {
+  try {
+    const DESKTOP_BP = 1280;
+    const btn = document.getElementById('headerRequestBtn');
+    const dropdown = document.getElementById('headerRequestDropdown');
+    if (!btn || !dropdown) return;
+
+    const toggleDropdown = (e) => {
+      // Only show dropdown on desktop
+      if (window.innerWidth < DESKTOP_BP) return;
+      
+      e.stopPropagation();
+      const isOpen = dropdown.classList.contains('is-open');
+      
+      if (isOpen) {
+        dropdown.classList.remove('is-open');
+      } else {
+        // Close other dropdowns if any
+        document.querySelectorAll('.header__request-dropdown.is-open').forEach(el => {
+          if (el !== dropdown) el.classList.remove('is-open');
+        });
+        dropdown.classList.add('is-open');
+      }
+    };
+
+    btn.addEventListener('click', toggleDropdown);
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+        dropdown.classList.remove('is-open');
+      }
+    });
+
+    // Close dropdown on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && dropdown.classList.contains('is-open')) {
+        dropdown.classList.remove('is-open');
+      }
+    });
+
+    // Close dropdown on window resize if below desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth < DESKTOP_BP) {
+        dropdown.classList.remove('is-open');
+      }
+    });
+  } catch (_) {}
+})();
+
 // Global header account-chip behaviour (for all pages)
 (function initAccountChipLink() {
   try {
@@ -660,10 +711,21 @@ function initSendPayment() {
   })();
 
   // Add-bank back link: return to captured entrypoint (index, select-counterparty, settings)
+  // Add-customer back link: always return to index.html
   (function initAddBankBackLink() {
     try {
       var backLink = document.getElementById('abBackLink');
       if (!backLink) return;
+      
+      // Check if this is the add-customer page
+      var isAddCustomer = document.querySelector('main.page--addcustomer');
+      if (isAddCustomer) {
+        // For add-customer, always go to index.html
+        backLink.setAttribute('href', 'index.html');
+        return;
+      }
+      
+      // For add-bank, use entrypoint logic
       var key = ADD_BANK_RETURN_KEY;
       var target = null;
       if (window.sessionStorage) {
@@ -2563,8 +2625,9 @@ if (document.readyState === 'loading') {
         if (backLink && backLink.href) {
           window.location.href = backLink.href;
         } else {
-          // Fallback to select-counterparty
-          window.location.href = 'select-counterparty.html';
+          // Fallback: index.html for add-customer, select-counterparty for add-bank
+          const isAddCustomer = document.querySelector('main.page--addcustomer');
+          window.location.href = isAddCustomer ? 'index.html' : 'select-counterparty.html';
         }
       }
     }
@@ -3198,8 +3261,9 @@ if (document.readyState === 'loading') {
       if (backLink && backLink.href) {
         window.location.href = backLink.href;
       } else {
-        // Fallback to select-counterparty
-        window.location.href = 'select-counterparty.html';
+        // Fallback: index.html for add-customer, select-counterparty for add-bank
+        const isAddCustomer = document.querySelector('main.page--addcustomer');
+        window.location.href = isAddCustomer ? 'index.html' : 'select-counterparty.html';
       }
     } else {
       // On desktop, show cancel modal
@@ -3367,7 +3431,9 @@ if (document.readyState === 'loading') {
   
   if (cancelCancelBtn) {
     cancelCancelBtn.addEventListener('click', () => {
-      window.location.href = 'select-counterparty.html';
+      // Check if this is the add-customer page
+      const isAddCustomer = document.querySelector('main.page--addcustomer');
+      window.location.href = isAddCustomer ? 'index.html' : 'select-counterparty.html';
     });
   }
   

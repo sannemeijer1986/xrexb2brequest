@@ -1191,4 +1191,16 @@ body.modal-locked {
   #needCounterpartyModal.modal.modal--dialog .modal__footer {
     flex-direction: column-reverse;
   }
+
+  // For the "Add customer" dialog, invert CTA order on mobile/tablet
+  // so that "Add customer" (primary) appears first and "Cancel" (secondary) second.
+  #addCustomerModal.modal.modal--dialog .modal__footer {
+    flex-direction: column-reverse;
+  }
+
+  // For the "Close without saving" dialog on add-customer page, invert CTA order on mobile/tablet
+  // so that "Close without saving" (alert/primary negative) appears first and "Back" (secondary) second.
+  #cancelConfirmModal.modal.modal--dialog .modal__footer {
+    flex-direction: column-reverse;
+  }
 }

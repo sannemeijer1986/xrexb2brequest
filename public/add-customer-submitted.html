@@ -18,6 +18,34 @@
         </a>
         <div class="header__spacer"></div>
         <div class="header__actions">
+          <button type="button" class="header__request-btn" aria-label="1 active request(s)" id="headerRequestBtn">
+            <img src="assets/icon_requestpayment_blue.svg" alt="" width="20" height="20" />
+            <span class="header__request-btn__text">1 active request(s)</span>
+            <span class="header__request-btn__badge">1</span>
+            <div class="header__request-dropdown" id="headerRequestDropdown">
+              <div class="header__request-dropdown__banner">
+                <span class="header__request-dropdown__banner-icon" aria-hidden="true"></span>
+                <span>For the requests below, please share their links with the customer if not done already.</span>
+              </div>
+              <div class="header__request-dropdown__content">
+                <h3 class="header__request-dropdown__title">Customer invitation requests</h3>
+                <ul class="header__request-dropdown__list">
+                  <li class="header__request-dropdown__item">
+                    <div class="header__request-dropdown__item-row">
+                      <div class="header__request-dropdown__item-icon">
+                      <img src="assets/icon_modal_bank_company.svg" alt="" width="16" height="16" />
+                    </div>
+                      <div class="header__request-dropdown__item-content">
+                        <p class="header__request-dropdown__item-name">To NovaQuill Ltd</p>
+                      </div>
+                    </div>
+                    <p class="header__request-dropdown__item-status">Awaiting response</p>
+                    <p class="header__request-dropdown__item-date">00/00/0000, 00:00:00</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </button>
           <a class="circle-icon" href="https://intercom.help/xrex-sg/en/" target="_blank" rel="noopener noreferrer" title="Support">
             <img src="assets/icon_support.svg" alt="support" width="20" height="20" />
           </a>
