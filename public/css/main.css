@@ -1435,6 +1435,9 @@ input[type=number] {
   flex-wrap: wrap;
   margin-bottom: 56px;
 }
+.page__subheader.is-hidden {
+  display: none;
+}
 .page__subheader .btn {
   text-decoration: none;
   font-weight: 700;
@@ -1583,13 +1586,10 @@ input[type=number] {
 }
 
 .cp-empty {
-  border: 1px dashed #eeeeee;
-  border-radius: 16px;
   padding: 32px;
   text-align: center;
-  background: #fff;
   display: grid;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
   justify-items: center;
 }
@@ -1597,17 +1597,27 @@ input[type=number] {
 .cp-empty__title {
   font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 22px;
   color: #0f172a;
   margin: 0;
+}
+@media screen and (min-width: 1280px) {
+  .cp-empty__title {
+    font-size: 26px;
+  }
 }
 
 .cp-empty__text {
   font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   color: #797A7B;
-  margin: 0;
+  margin: 0 0 24px 0;
+}
+@media screen and (min-width: 1280px) {
+  .cp-empty__text {
+    font-size: 16px;
+  }
 }
 
 .cp-empty .btn {
@@ -1731,6 +1741,41 @@ input[type=number] {
   .cp-item .cp-status {
     display: none;
   }
+  .page--select-customer .cp-item__email,
+  .page--select-customer .cp-item__customer-number {
+    display: block;
+    font-size: 12px;
+    color: #797A7B;
+    margin: 0;
+  }
+  .page--select-customer .cp-item__email {
+    font-weight: 700;
+  }
+  .page--select-customer .cp-item__customer-number {
+    font-weight: 500;
+  }
+  .page--select-customer .cp-item__content .cp-status {
+    display: block !important;
+    font-size: 12px !important;
+  }
+  .page--select-customer .cp-item__content .cp-status::after {
+    content: none !important;
+  }
+  .page--select-customer .cp-item__content .cp-status.cp-status--ok {
+    color: #10b981 !important;
+  }
+  .page--select-customer .cp-item__metablack,
+  .page--select-customer .cp-item__meta {
+    display: none;
+  }
+}
+@media (min-width: 1280px) {
+  .page--select-customer .cp-item__email,
+  .page--select-customer .cp-item__customer-number {
+    display: none;
+  }
+}
+@media (max-width: 1279px) {
   .cp-item.is-unverified .cp-status {
     display: inline;
   }

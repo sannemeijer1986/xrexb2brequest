@@ -156,6 +156,10 @@
   flex-wrap: wrap;
   margin-bottom: 56px;
 
+  &.is-hidden {
+    display: none;
+  }
+
   .btn {
     text-decoration: none;
     font-weight: 700;
@@ -293,29 +297,34 @@
   gap: 0;
 }
 .cp-empty {
-  border: 1px dashed $border-color;
-  border-radius: $radius-lg;
   padding: 32px;
   text-align: center;
-  background: #fff;
   display: grid;
-  gap: 12px;
+  gap: 8px;
   align-items: center;
   justify-items: center;
 }
 .cp-empty__title {
   font-family: $font-family-sans;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 22px;
   color: $text-primary;
   margin: 0;
+
+  @media screen and (min-width: $bp-desktop) {
+    font-size: 26px;
+  }
 }
 .cp-empty__text {
   font-family: $font-family-sans;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 14px;
   color: $text-secondary;
-  margin: 0;
+  margin: 0 0 24px 0;
+
+  @media screen and (min-width: $bp-desktop) {
+    font-size: 16px;
+  }
 }
 .cp-empty .btn {
   min-width: 220px;
@@ -384,6 +393,47 @@
 // - Unverified (review/rejected): show status, hide account meta
 @media (max-width: ($bp-desktop - 1px)) {
   .cp-item .cp-status { display: none; }
+  
+  // Select-customer page: show email, customer number, and status inside content
+  .page--select-customer .cp-item__email,
+  .page--select-customer .cp-item__customer-number {
+    display: block;
+    font-size: 12px;
+    color: $text-secondary;
+    margin: 0;
+  }
+  .page--select-customer .cp-item__email {
+    font-weight: 700;
+  }
+  .page--select-customer .cp-item__customer-number {
+    font-weight: 500;
+  }
+  .page--select-customer .cp-item__content .cp-status {
+    display: block !important;
+    font-size: 12px !important;
+  }
+  .page--select-customer .cp-item__content .cp-status::after {
+    content: none !important;
+  }
+  // Ensure verified status is green on mobile for select-customer
+  .page--select-customer .cp-item__content .cp-status.cp-status--ok {
+    color: $success-500 !important;
+  }
+  .page--select-customer .cp-item__metablack,
+  .page--select-customer .cp-item__meta {
+    display: none;
+  }
+}
+
+// Desktop: hide email and customer number inside content for select-customer
+@media (min-width: $bp-desktop) {
+  .page--select-customer .cp-item__email,
+  .page--select-customer .cp-item__customer-number {
+    display: none;
+  }
+}
+
+@media (max-width: ($bp-desktop - 1px)) {
   // Unverified: show status (Under review / Rejected)
   .cp-item.is-unverified .cp-status { display: inline; }
   .cp-item.is-unverified .cp-item__metablack,

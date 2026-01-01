@@ -26,6 +26,7 @@ function calculateFees(amount, payerRate, receiverRate) {
 
 const PROTOTYPE_STATE_KEY = 'xrexb2b.state.v1';
 const ADD_BANK_RETURN_KEY = 'xrexb2b.addBankReturnUrl';
+const ADD_CUSTOMER_RETURN_KEY = 'xrexb2b.addCustomerReturnUrl';
 const SEND_PAYMENT_RETURN_KEY = 'xrexb2b.sendPaymentReturnUrl';
 const PROTOTYPE_STATE_MIN = 1;
 const PROTOTYPE_STATE_MAX = 6;
@@ -750,7 +751,7 @@ function initSendPayment() {
   })();
 
   // Add-bank back link: return to captured entrypoint (index, select-counterparty, settings)
-  // Add-customer back link: always return to index.html
+  // Add-customer back link: return to captured entrypoint (index, select-customer)
   (function initAddBankBackLink() {
     try {
       var backLink = document.getElementById('abBackLink');
@@ -759,8 +760,15 @@ function initSendPayment() {
       // Check if this is the add-customer page
       var isAddCustomer = document.querySelector('main.page--addcustomer');
       if (isAddCustomer) {
-        // For add-customer, always go to index.html
-        backLink.setAttribute('href', 'index.html');
+        // For add-customer, use entrypoint logic
+        var key = ADD_CUSTOMER_RETURN_KEY;
+        var target = null;
+        if (window.sessionStorage) {
+          target = window.sessionStorage.getItem(key);
+        }
+        var href = 'index.html'; // default to index
+        if (target === 'select-customer') href = 'select-customer.html';
+        backLink.setAttribute('href', href);
         return;
       }
       
@@ -2348,22 +2356,41 @@ if (document.readyState === 'loading') {
   const toolbar = page.querySelector('.cp-toolbar');
   if (!list) return;
 
+  // Check if this is the select-customer page
+  const isSelectCustomer = window.location.pathname.indexOf('select-customer.html') !== -1;
+  
+  // Add class to page for CSS targeting
+  if (isSelectCustomer) {
+    page.classList.add('page--select-customer');
+  }
+
   const STATUS_META = {
     verified: { className: 'cp-status--ok', label: 'Verified' },
-    review: { className: 'cp-status--review', label: 'Under review' },
+    review: { className: 'cp-status--review', label: isSelectCustomer ? 'Awaiting response' : 'Under review' },
     danger: { className: 'cp-status--danger', label: 'Rejected' },
   };
 
   const STATE_ITEMS = {
-    2: [
-      { title: 'NovaQuill Ltd', bank: 'DBS Bank', account: '012-345678-9', status: 'review', href: '#' },
-    ],
-    3: [
-      { title: 'NovaQuill Ltd', bank: 'DBS Bank', account: '012-345678-9', status: 'verified', href: 'send-payment.html' },
-      { title: 'Counterparty X', bank: 'CIMB', account: '012-345678-9', status: 'review', href: '#' },
-      { title: 'Counterparty Y', bank: 'CIMB', account: '012-345678-9', status: 'review', href: '#' },
-      { title: 'Counterparty Z', bank: 'CIMB', account: '012-345678-9', status: 'danger', href: '#' },
-    ],
+    2: isSelectCustomer 
+      ? [
+          { title: 'NovaQuill Ltd', email: 'payments@novaquill.com', code: 'CC-123456', status: 'review', href: '#' },
+        ]
+      : [
+          { title: 'NovaQuill Ltd', bank: 'DBS Bank', account: '012-345678-9', status: 'review', href: '#' },
+        ],
+    3: isSelectCustomer
+      ? [
+          { title: 'NovaQuill Ltd', email: 'payments@novaquill.com', code: 'CC-123456', status: 'verified', href: 'request-payment.html' },
+          { title: 'Customer X', email: 'payments@novaquill.com', code: 'CC-123456', status: 'verified', href: 'request-payment.html' },
+          { title: 'Customer Y', email: 'payments@novaquill.com', code: 'CC-123456', status: 'verified', href: 'request-payment.html' },
+          { title: 'Customer Z', email: 'payments@novaquill.com', code: 'CC-123456', status: 'danger', href: '#' },
+        ]
+      : [
+          { title: 'NovaQuill Ltd', bank: 'DBS Bank', account: '012-345678-9', status: 'verified', href: 'send-payment.html' },
+          { title: 'Counterparty X', bank: 'CIMB', account: '012-345678-9', status: 'review', href: '#' },
+          { title: 'Counterparty Y', bank: 'CIMB', account: '012-345678-9', status: 'review', href: '#' },
+          { title: 'Counterparty Z', bank: 'CIMB', account: '012-345678-9', status: 'danger', href: '#' },
+        ],
   };
 
   const getItemsForState = (state) => {
@@ -2375,14 +2402,40 @@ if (document.readyState === 'loading') {
 
   const renderEmpty = () => {
     if (toolbar) toolbar.classList.add('is-hidden');
+    
+    // Hide subheader for select-customer page when empty
+    if (isSelectCustomer) {
+      const subheader = page.querySelector('.page__subheader');
+      if (subheader) subheader.classList.add('is-hidden');
+    }
+    
+    // Hide cp-sticky on breakpoints below desktop when empty state is visible
+    const DESKTOP_BP = 1280;
+    const sticky = document.querySelector('.cp-sticky');
+    if (sticky && window.innerWidth < DESKTOP_BP) {
+      sticky.style.display = 'none';
+    }
+    
+    const emptyTitle = isSelectCustomer ? 'No customers found' : 'No counterparty accounts yet';
+    const emptyText = isSelectCustomer 
+      ? 'Add a customer to start using request payment services'
+      : 'Add a counterparty bank account before sending a payment.';
+    const emptyBtnText = isSelectCustomer ? 'Add customer' : 'Add counterparty account';
+    const emptyBtnHref = isSelectCustomer ? 'add-customer.html' : 'add-bank.html';
+    
+    const emptyImage = isSelectCustomer 
+      ? 'assets/Illustration_ No customers.svg'
+      : 'assets/icon_bankaccount_blue.svg';
+    const emptyImageWidth = isSelectCustomer ? 229 : 48;
+    const emptyImageHeight = isSelectCustomer ? 138 : 48;
+    
     list.innerHTML = `
       <li class="cp-empty">
-        <img src="assets/icon_bankaccount_blue.svg" alt="" width="48" height="48" />
-        <p class="cp-empty__title">No counterparty accounts yet</p>
-        <p class="cp-empty__text">Add a counterparty bank account before sending a payment.</p>
-        <a class="btn btn--primary btn--md" href="add-bank.html">
-          <img class="btn-icon" src="assets/icon_plus.svg" alt="" width="16" height="16" />
-          Add counterparty account
+        <img src="${emptyImage}" alt="" width="${emptyImageWidth}" height="${emptyImageHeight}" />
+        <p class="cp-empty__title">${emptyTitle}</p>
+        <p class="cp-empty__text">${emptyText}</p>
+        <a class="btn btn--primary btn--md" href="${emptyBtnHref}">
+          ${emptyBtnText}
         </a>
       </li>`;
   };
@@ -2398,6 +2451,10 @@ if (document.readyState === 'loading') {
   const renderList = () => {
     const state = typeof getPrototypeState === 'function' ? getPrototypeState() : PROTOTYPE_STATE_MIN;
     const baseItems = getItemsForState(state);
+    const subheader = page.querySelector('.page__subheader');
+    const DESKTOP_BP = 1280;
+    const sticky = document.querySelector('.cp-sticky');
+    
     if (!baseItems.length) {
       if (filter) {
         filter.checked = false;
@@ -2406,6 +2463,16 @@ if (document.readyState === 'loading') {
       }
       renderEmpty();
       return;
+    }
+
+    // Show subheader when there are items (for select-customer page)
+    if (isSelectCustomer && subheader) {
+      subheader.classList.remove('is-hidden');
+    }
+
+    // Show cp-sticky when items are available (on breakpoints below desktop)
+    if (sticky && window.innerWidth < DESKTOP_BP) {
+      sticky.style.display = '';
     }
 
     const hasVerified = baseItems.some((item) => item.status === 'verified');
@@ -2434,18 +2501,36 @@ if (document.readyState === 'loading') {
       const meta = STATUS_META[item.status] || STATUS_META.review;
       const isVerified = item.status === 'verified';
       const classes = ['cp-item', isVerified ? 'is-verified' : 'is-unverified'];
-      const href = isVerified ? (item.href || 'send-payment.html') : '#';
-      const mobileLabel = [`(${item.bank})`, item.account].filter(Boolean).join(' ');
+      const defaultHref = isSelectCustomer ? 'request-payment.html' : 'send-payment.html';
+      const href = isVerified ? (item.href || defaultHref) : '#';
+      const mobileLabel = isSelectCustomer 
+        ? [item.email || 'payments@novaquill.com', item.code || 'CC-123456'].filter(Boolean).join(' ')
+        : [`(${item.bank})`, item.account].filter(Boolean).join(' ');
+      const metablack = isSelectCustomer ? (item.email || 'payments@novaquill.com') : `(${item.bank})`;
+      const metaText = isSelectCustomer ? (item.code || 'CC-123456') : item.account;
+      const email = isSelectCustomer ? (item.email || 'payments@novaquill.com') : '';
+      const customerNumber = isSelectCustomer ? (item.code || 'CC-123456') : '';
+      
+      // For select-customer page, add email and customer number inside content on mobile
+      const customerContent = isSelectCustomer 
+        ? `
+              <strong class="cp-item__title">${item.title}</strong>
+              <span class="cp-item__email">${email}</span>
+              <span class="cp-item__customer-number">${customerNumber}</span>
+              <small class="cp-status ${meta.className}">${meta.label}</small>`
+        : `
+              <strong class="cp-item__title">${item.title}</strong>
+              <small class="cp-status ${meta.className}" ${mobileLabel ? `data-mobile-label="${mobileLabel}"` : ''}>${meta.label}</small>`;
+      
       return `
         <li>
           <a class="${classes.join(' ')}" href="${href}" data-status="${item.status}" ${isVerified ? '' : 'aria-disabled="true"'}>
-            <span class="cp-item__icon"><img src="assets/icon_bank_cp.svg" alt="" /></span>
+            <span class="cp-item__icon"><img src="assets/outline_office_new.svg" alt="" /></span>
             <span class="cp-item__content">
-              <strong class="cp-item__title">${item.title}</strong>
-              <small class="cp-status ${meta.className}" ${mobileLabel ? `data-mobile-label="${mobileLabel}"` : ''}>${meta.label}</small>
+              ${customerContent}
             </span>
-            <span class="cp-item__metablack">(${item.bank})</span>
-            <span class="cp-item__meta">${item.account}</span>
+            <span class="cp-item__metablack">${metablack}</span>
+            <span class="cp-item__meta">${metaText}</span>
             <img class="cp-item__chev" src="assets/icon_chevron_right.svg" width="20" height="20" alt="" />
           </a>
         </li>`;
@@ -2456,6 +2541,22 @@ if (document.readyState === 'loading') {
   if (filter) {
     filter.addEventListener('change', () => renderList());
   }
+
+  // Handle window resize to show/hide sticky footer appropriately
+  window.addEventListener('resize', () => {
+    const state = typeof getPrototypeState === 'function' ? getPrototypeState() : PROTOTYPE_STATE_MIN;
+    const baseItems = getItemsForState(state);
+    const sticky = document.querySelector('.cp-sticky');
+    const DESKTOP_BP = 1280;
+    
+    if (sticky && window.innerWidth < DESKTOP_BP) {
+      // Hide sticky if empty state is visible, show if items are available
+      sticky.style.display = baseItems.length > 0 ? '' : 'none';
+    } else if (sticky) {
+      // On desktop, sticky is hidden via CSS, so reset inline style
+      sticky.style.display = '';
+    }
+  });
 
   document.addEventListener('prototypeStateChange', renderList);
   renderList();
@@ -2664,9 +2765,15 @@ if (document.readyState === 'loading') {
         if (backLink && backLink.href) {
           window.location.href = backLink.href;
         } else {
-          // Fallback: index.html for add-customer, select-counterparty for add-bank
+          // Fallback: use entrypoint for add-customer, select-counterparty for add-bank
           const isAddCustomer = document.querySelector('main.page--addcustomer');
-          window.location.href = isAddCustomer ? 'index.html' : 'select-counterparty.html';
+          if (isAddCustomer) {
+            const target = window.sessionStorage ? window.sessionStorage.getItem(ADD_CUSTOMER_RETURN_KEY) : null;
+            const href = target === 'select-customer' ? 'select-customer.html' : 'index.html';
+            window.location.href = href;
+          } else {
+            window.location.href = 'select-counterparty.html';
+          }
         }
       }
     }
@@ -3300,9 +3407,15 @@ if (document.readyState === 'loading') {
       if (backLink && backLink.href) {
         window.location.href = backLink.href;
       } else {
-        // Fallback: index.html for add-customer, select-counterparty for add-bank
-        const isAddCustomer = document.querySelector('main.page--addcustomer');
-        window.location.href = isAddCustomer ? 'index.html' : 'select-counterparty.html';
+          // Fallback: use entrypoint for add-customer, select-counterparty for add-bank
+          const isAddCustomer = document.querySelector('main.page--addcustomer');
+          if (isAddCustomer) {
+            const target = window.sessionStorage ? window.sessionStorage.getItem(ADD_CUSTOMER_RETURN_KEY) : null;
+            const href = target === 'select-customer' ? 'select-customer.html' : 'index.html';
+            window.location.href = href;
+          } else {
+            window.location.href = 'select-counterparty.html';
+          }
       }
     } else {
       // On desktop, show cancel modal
@@ -3472,7 +3585,13 @@ if (document.readyState === 'loading') {
     cancelCancelBtn.addEventListener('click', () => {
       // Check if this is the add-customer page
       const isAddCustomer = document.querySelector('main.page--addcustomer');
-      window.location.href = isAddCustomer ? 'index.html' : 'select-counterparty.html';
+      if (isAddCustomer) {
+        const target = window.sessionStorage ? window.sessionStorage.getItem(ADD_CUSTOMER_RETURN_KEY) : null;
+        const href = target === 'select-customer' ? 'select-customer.html' : 'index.html';
+        window.location.href = href;
+      } else {
+        window.location.href = 'select-counterparty.html';
+      }
     });
   }
   
@@ -3992,6 +4111,26 @@ if (document.readyState === 'loading') {
           else if (from.indexOf('select-counterparty.html') !== -1) name = 'select-counterparty';
           else if (from.indexOf('index.html') !== -1) name = 'index';
           window.sessionStorage.setItem(ADD_BANK_RETURN_KEY, name);
+        } catch (_) {}
+      }, { capture: true });
+    });
+  } catch (_) {}
+})();
+
+// Capture entrypoint for add-customer page (index, select-customer)
+(function initAddCustomerEntrypointTracking() {
+  try {
+    var links = document.querySelectorAll('a[href="add-customer.html"], a[href*="add-customer.html"]');
+    if (!links.length) return;
+    links.forEach(function (link) {
+      link.addEventListener('click', function () {
+        try {
+          if (!window.sessionStorage) return;
+          var from = (window.location.pathname || '').toLowerCase();
+          var name = 'index';
+          if (from.indexOf('select-customer.html') !== -1) name = 'select-customer';
+          else if (from.indexOf('index.html') !== -1) name = 'index';
+          window.sessionStorage.setItem(ADD_CUSTOMER_RETURN_KEY, name);
         } catch (_) {}
       }, { capture: true });
     });
