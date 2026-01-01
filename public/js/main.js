@@ -5243,6 +5243,10 @@ if (document.readyState === 'loading') {
     if (state <= 1) {
       e.preventDefault();
       openModal();
+    } else if (state >= 2) {
+      // If state is 2 or higher, navigate to select-customer.html
+      e.preventDefault();
+      window.location.href = 'select-customer.html';
     }
   });
 })();
