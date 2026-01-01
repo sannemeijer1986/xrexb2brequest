@@ -219,6 +219,45 @@ try {
     const dropdown = document.getElementById('headerRequestDropdown');
     if (!btn || !dropdown) return;
 
+    // Format date as DD/MM/YYYY, HH:MM:SS
+    const formatDateTime = (date) => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+    };
+
+    // Update date timestamp in dropdown items
+    const updateRequestDates = () => {
+      const dateElements = dropdown.querySelectorAll('.header__request-dropdown__item-date');
+      const currentDate = formatDateTime(new Date());
+      dateElements.forEach(el => {
+        el.textContent = currentDate;
+      });
+    };
+
+    // Set date when state becomes 2
+    const handleStateChange = (state) => {
+      if (state === 2) {
+        updateRequestDates();
+      }
+    };
+
+    // Check initial state and set date if already at state 2
+    if (typeof getPrototypeState === 'function') {
+      const currentState = getPrototypeState();
+      if (currentState === 2) {
+        updateRequestDates();
+      }
+      // Listen for state changes
+      if (typeof onPrototypeStateChange === 'function') {
+        onPrototypeStateChange(handleStateChange);
+      }
+    }
+
     const toggleDropdown = (e) => {
       // Only show dropdown on desktop
       if (window.innerWidth < DESKTOP_BP) return;

@@ -234,24 +234,24 @@ html[data-prototype-state="state-2"] .site-header .header__actions .header__requ
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding: 16px 16px 16px 16px;
+    padding: 16px;
     background: #ffffff; // surface/card_primary
     border: 1px solid #eeeeee; // border/soft
     border-radius: $radius-md;
-    transition: background-color 0.15s ease;
+
     cursor: pointer;
     width: 100%;
-    height: 100%;
+    flex: 1;
     align-items: flex-start;
     justify-content: flex-start;
 
-    &:hover {
-      background: $gray-100;
-    }
+    // &:hover {
+    //   background: $gray-100;
+    // // }
 
-    &:active {
-      background: $gray-200;
-    }
+    // &:active {
+    //   background: $gray-200;
+    // }
   }
 
   .header__request-dropdown__item-row {
@@ -314,6 +314,7 @@ html[data-prototype-state="state-2"] .site-header .header__actions .header__requ
     font-size: 12px; // Body text - small
     color: #797a7b; // text/secondary
     margin: 0;
+    margin-top: auto;
     line-height: 1; // 100%
   }
 }
