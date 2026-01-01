@@ -158,7 +158,7 @@ html[data-prototype-state="state-2"] .site-header .header__actions .header__requ
     right: 0;
     width: 360px;
     gap: 24px;
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: flex-start;
     max-width: calc(100vw - 32px);
@@ -172,7 +172,7 @@ html[data-prototype-state="state-2"] .site-header .header__actions .header__requ
 
     @media (min-width: $bp-desktop) {
       &.is-open {
-        display: block;
+        display: flex;
       }
     }
   }
@@ -205,7 +205,9 @@ html[data-prototype-state="state-2"] .site-header .header__actions .header__requ
     display: flex;
     flex-direction: column;
     gap: 16px;
-  }
+    width: 100%;
+    align-items: flex-start;
+    }
 
   .header__request-dropdown__title {
     font-family: $font-family-sans;
@@ -225,20 +227,23 @@ html[data-prototype-state="state-2"] .site-header .header__actions .header__requ
     flex: 1;
     flex-direction: column;
     gap: 4px;
+    min-height: 108px;
   }
 
   .header__request-dropdown__item {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    padding: 16px;
+    padding: 16px 16px 16px 16px;
     background: #ffffff; // surface/card_primary
     border: 1px solid #eeeeee; // border/soft
     border-radius: $radius-md;
     transition: background-color 0.15s ease;
     cursor: pointer;
-    height: 108px;
-    justify-content: flex-end;
+    width: 100%;
+    height: 100%;
+    align-items: flex-start;
+    justify-content: flex-start;
 
     &:hover {
       background: $gray-100;
@@ -263,10 +268,12 @@ html[data-prototype-state="state-2"] .site-header .header__actions .header__requ
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #EEEEEE;
+    border-radius: 16px;
 
     img {
-      width: 16px;
-      height: 16px;
+      width: 10px;
+      height: 10px;
       display: block;
     }
   }
@@ -275,6 +282,7 @@ html[data-prototype-state="state-2"] .site-header .header__actions .header__requ
     flex: 1;
     min-width: 0;
     display: flex;
+    align-items: flex-start;
     flex-direction: column;
     gap: 4px;
   }
