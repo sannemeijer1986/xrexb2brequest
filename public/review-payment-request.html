@@ -521,6 +521,12 @@
         if (!btn) return;
         btn.addEventListener('click', (e) => {
           e.preventDefault();
+          // Set state to 4 when creating payment request link
+          try {
+            if (typeof window.getPrototypeState === 'function' && typeof window.setPrototypeState === 'function') {
+              if (window.getPrototypeState() < 4) window.setPrototypeState(4);
+            }
+          } catch (_) {}
           // Skip 2FA modal and go directly to loading indicator
           const loading = document.getElementById('loadingModal');
           if (loading) {

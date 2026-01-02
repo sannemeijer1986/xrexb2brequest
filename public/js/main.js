@@ -274,7 +274,8 @@ try {
         if (statusEl) statusEl.textContent = 'Awaiting payment';
         // Show and populate payment amount at state 4
         if (amountEl) {
-          amountEl.style.display = 'block';
+          // Remove inline style completely so CSS can control it
+          amountEl.removeAttribute('style');
           // Get payment amount from receiptData
           try {
             const raw = window.sessionStorage && window.sessionStorage.getItem('receiptData');
@@ -312,6 +313,27 @@ try {
         onPrototypeStateChange(handleStateChange);
       }
     }
+    
+    // Also update on page load/visibility change to ensure state 4 amount is visible
+    const ensureState4AmountVisible = () => {
+      if (typeof getPrototypeState === 'function') {
+        const state = getPrototypeState();
+        if (state === 4) {
+          const amountEl = dropdown.querySelector('.header__request-dropdown__item-amount');
+          if (amountEl && amountEl.hasAttribute('style')) {
+            amountEl.removeAttribute('style');
+          }
+        }
+      }
+    };
+    
+    // Run on load and visibility change
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', ensureState4AmountVisible);
+    } else {
+      ensureState4AmountVisible();
+    }
+    document.addEventListener('visibilitychange', ensureState4AmountVisible);
 
     const toggleDropdown = (e) => {
       // Only show dropdown on desktop

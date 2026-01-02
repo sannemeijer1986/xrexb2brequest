@@ -460,9 +460,13 @@ html[data-prototype-state=state-4] .site-header .header__actions .header__reques
   line-height: 1;
 }
 
-html[data-prototype-state=state-4] .header__request-dropdown__item {
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__item {
   height: 140px;
   min-height: 140px;
+}
+
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__item-amount {
+  display: block !important;
 }
 
 /* Floating build badge */
