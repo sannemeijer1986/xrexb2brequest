@@ -2099,9 +2099,15 @@ function initSendPayment() {
         docNumber = ciNumber || '';
       }
       const paymentId = "PYT-20251118-f2d3fa4e";
+      // Extract customer code for request-payment pages
+      const customerCode = isRequestPayment 
+        ? (getText('.summary-recipient .summary-recipient__currency-text') || getText('.summary-recipient .recipient-select__currency') || 'CC-123456')
+        : null;
+      
       const data = {
         receiverName: (getText('.summary-recipient .recipient-select__title') || '').replace(/^To\s+/i,''),
         receiverBank: getText('.summary-recipient .recipient-select__subtitle'),
+        customerCode: customerCode,
         amountPayableFmt: fmt(amount, payeeCurrency),
         deductedFrom: `${payerCurrency} account`,
         feePct: `${(feeRate*100).toFixed(2)}%`,
@@ -2376,9 +2382,15 @@ if (document.readyState === 'loading') {
             payeeGets = 0;
           }
           const fmt = (v, cur) => `${Number(v||0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${cur}`;
+          // Extract customer code for request-payment pages
+          const customerCode = isRequestPayment 
+            ? (getText('.summary-recipient .summary-recipient__currency-text') || getText('.summary-recipient .recipient-select__currency') || 'CC-123456')
+            : null;
+          
       const data = {
             receiverName: (getText('.summary-recipient .recipient-select__title') || '').replace(/^To\s+/i,''),
             receiverBank: getText('.summary-recipient .recipient-select__subtitle'),
+            customerCode: customerCode,
             amountPayableFmt: fmt(amount, payeeCurrency),
             deductedFrom: `${payerCurrency} account`,
             feePct: `${(feeRate*100).toFixed(2)}%`,

@@ -6685,6 +6685,9 @@ body.modal-locked {
     width: 180px;
   }
 }
+.page--review .receipt__actions #review-confirm {
+  min-width: 280px;
+}
 .page--review .convertrate-wrapper {
   display: flex;
   flex-direction: column;
