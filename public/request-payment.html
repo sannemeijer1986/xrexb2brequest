@@ -137,7 +137,7 @@
 
               <div class="form__field form__field--select" id="expiresAfter-field">
                 <label for="expiresAfter">This payment request expires after</label>
-                <select id="expiresAfter" class="select-" name="expiresAfter" disabled>
+                <select id="expiresAfter" class="select-expires-after" name="expiresAfter" disabled>
                   <option value="1 week" selected>1 week</option>
                 </select>
               </div>
@@ -281,7 +281,7 @@
                         <span>USD</span>
                       </div>
                     </div>
-                    <a href="#" class="payment-methods-info__link">More about payment methods & billing</a>
+                    <a href="#" class="payment-methods-info__link" id="paymentMethodsLink">More about payment methods & billing</a>
                   </div>
                 </div>
               </div>
@@ -713,6 +713,66 @@
           <div class="modal-footer">
             <button class="btn btn--secondary btn--md" data-modal-close id="unlinkCancel">Back</button>
             <button class="btn btn--primary btn--md" id="unlinkConfirm" disabled>Confirm</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Methods & Billing Modal -->
+    <div id="paymentMethodsModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="paymentMethodsTitle">
+      <div class="modal-wrapper">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="paymentMethodsTitle">Payment methods & billing</h2>
+            <button class="modal-close" data-modal-close aria-label="Close modal">
+              <img src="assets/icon_close.svg" width="24" height="24" alt="close" />
+            </button>
+          </div>
+          <div class="modal-body">
+            <p class="payment-methods-modal__intro">
+              The customer can choose the payment method, but your billing and received funds are always in USD
+            </p>
+            <div class="payment-methods-modal__content">
+              <div class="payment-methods-modal__section">
+                <p class="payment-methods-modal__label">Customer can pay with</p>
+                <div class="payment-methods-modal__options">
+                  <div class="payment-methods-modal__option">
+                    <img src="assets/icon_USD.svg" width="24" height="24" alt="USD" class="payment-methods-modal__icon" />
+                    <div class="payment-methods-modal__option-content">
+                      <p class="payment-methods-modal__option-title">USD Bank transfer</p>
+                      <p class="payment-methods-modal__option-subtitle">Usually arrives in 1-5 business days</p>
+                    </div>
+                  </div>
+                  <div class="payment-methods-modal__option">
+                    <img src="assets/icon_USDT.svg" width="24" height="24" alt="USDT" class="payment-methods-modal__icon" />
+                    <div class="payment-methods-modal__option-content">
+                      <p class="payment-methods-modal__option-title">USDT Stablecoin</p>
+                      <p class="payment-methods-modal__option-subtitle">Usually arrives in minutes</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="payment-methods-modal__arrow">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="16" cy="16" r="15" stroke="#2D2F2F" stroke-width="1.5"/>
+                  <path d="M11 16L15 20L19 16M15 20V12" stroke="#2D2F2F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="payment-methods-modal__section">
+                <p class="payment-methods-modal__label">You will receive / you will be billed in</p>
+                <div class="payment-methods-modal__options">
+                  <div class="payment-methods-modal__option">
+                    <img src="assets/icon_USD.svg" width="24" height="24" alt="USD" class="payment-methods-modal__icon" />
+                    <div class="payment-methods-modal__option-content">
+                      <p class="payment-methods-modal__option-title">USD</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn--primary btn--md" data-modal-close>Understood</button>
           </div>
         </div>
       </div>

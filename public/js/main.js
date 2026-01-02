@@ -2303,6 +2303,24 @@ if (document.readyState === 'loading') {
   initSendPayment();
 }
 
+// Payment Methods Modal - Open on link click
+(function initPaymentMethodsModal() {
+  const link = document.getElementById('paymentMethodsLink');
+  const modal = document.getElementById('paymentMethodsModal');
+  if (!link || !modal) return;
+  
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (typeof window.__openModal === 'function') {
+      window.__openModal(modal);
+    } else {
+      modal.setAttribute('aria-hidden', 'false');
+      document.documentElement.classList.add('modal-open');
+      document.body.classList.add('modal-open');
+    }
+  });
+})();
+
 // Confirm modal actions
 (function initConfirmModalActions() {
   const modal = document.getElementById('confirmPaymentModal');
