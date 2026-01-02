@@ -460,7 +460,7 @@
               <span class="transactions__head-cell">Requested date</span>
             </div>
             <ul class="transactions__list">
-              <li class="transactions__item transactions__item--link" data-action="payment" data-href="payment-details.html">
+              <li class="transactions__item transactions__item--link" data-action="payment" data-href="payment-request-details.html">
                 <div class="transactions__cell transactions__cell--activity">
                   <span class="transactions__item-icon transactions__item-icon--payment">
                     <img src="assets/icon-tx-payment.svg" alt="" width="20" height="20" />
@@ -487,30 +487,39 @@
             <div class="transactions__head-row">
               <span class="transactions__head-cell transactions__head-cell--activity"></span>
               <span class="transactions__head-cell">Payment amount</span>
+              <span class="transactions__head-cell">Receive total</span>
+              <span class="transactions__head-cell">Received amount</span>
               <span class="transactions__head-cell">Purpose</span>
               <span class="transactions__head-cell">Status</span>
-              <span class="transactions__head-cell">Requested date</span>
+              <span class="transactions__head-cell transactions__head-cell--right">Submitted</span>
             </div>
             <ul class="transactions__list">
-              <li class="transactions__item transactions__item--link" data-action="payment" data-href="payment-details.html">
+              <li class="transactions__item transactions__item--link" data-action="payment" data-href="payment-request-details.html">
                 <div class="transactions__cell transactions__cell--activity">
-                  <span class="transactions__item-icon transactions__item-icon--payment">
-                    <img src="assets/icon-tx-payment.svg" alt="" width="20" height="20" />
+                  <span class="transactions__item-icon transactions__item-icon--payment-request">
+                    <img src="assets/icon_requestpayment_blue.svg" alt="" width="20" height="20" />
                   </span>
                   <div class="transactions__item-meta">
                     <div class="transactions__item-title">NovaQuill Ltd</div>
-                    <div class="transactions__item-status transactions__item-status--processing">Processing</div>
                   </div>
                 </div>
                 <div class="transactions__cell transactions__cell--amount">50,000.00 USD</div>
+                <div class="transactions__cell transactions__cell--receive-total">102,500.00 USD</div>
+                <div class="transactions__cell transactions__cell--received-amount">
+                  <div class="transactions__item-purpose">0.00</div>
+                  <div class="transactions__item-purpose-sub">/ 102,500.00 USD</div>
+                </div>
                 <div class="transactions__cell transactions__cell--type">
                   <div class="transactions__item-purpose">Goods purchase</div>
                   <div class="transactions__item-purpose-sub">PI-001234</div>
                 </div>
                 <div class="transactions__cell transactions__cell--status">
-                  <span class="transactions__item-status transactions__item-status--processing">Processing</span>
+                  <span class="transactions__item-status transactions__item-status--awaiting">Awaiting payment</span>
                 </div>
-                <div class="transactions__cell transactions__cell--date">25/11/2025, 15:19:09</div>
+                <div class="transactions__cell transactions__cell--date">
+                  <div class="transactions__item-date-main">25/11/2025</div>
+                  <div class="transactions__item-date-sub">15:19:09</div>
+                </div>
               </li>
             </ul>
           </div>

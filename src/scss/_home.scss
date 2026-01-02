@@ -887,6 +887,24 @@
   }
 }
 
+// Payment request panel: 7 columns layout
+[data-panel="payment-request"] .transactions__head-row {
+  grid-template-columns:
+    minmax(0, 2.4fr) /* activity / company name */
+    minmax(0, 1.4fr) /* Payment amount */
+    minmax(0, 1.4fr) /* Receive total */
+    minmax(0, 1.4fr) /* Received amount */
+    minmax(0, 2fr) /* Purpose */
+    minmax(0, 1.4fr) /* Status */
+    minmax(0, 1.6fr); /* Payment req. submission */
+  gap: 24px;
+  padding: 0 12px;
+  
+  @media (max-width: ($bp-desktop - 1px)) {
+    display: none;
+  }
+}
+
 .transactions__head-cell {
   text-transform: none;
 
@@ -933,6 +951,28 @@
   }
 }
 
+// Payment request panel: 7 columns layout
+[data-panel="payment-request"] .transactions__item {
+  grid-template-columns:
+    minmax(0, 2.4fr)
+    minmax(0, 1.4fr)
+    minmax(0, 1.4fr)
+    minmax(0, 1.4fr)
+    minmax(0, 2fr)
+    minmax(0, 1.4fr)
+    minmax(0, 1.6fr);
+  gap: 24px;
+  padding: 0 12px;
+  
+  @media (max-width: ($bp-desktop - 1px)) {
+    // Revert to default mobile layout
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 0px 12px;
+    padding: 16px 0;
+  }
+}
+
 .transactions__cell {
   font-family: $font-family-sans;
   font-size: 14px;
@@ -961,8 +1001,11 @@
   }
 
   &--date {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     text-align: right;
-    color: $text-secondary;
+    font-family: $font-family-sans;
     font-weight: 500;
     @media (min-width: $bp-desktop) {
       justify-self: end;
@@ -997,6 +1040,8 @@
   font-size: 14px;
   font-weight: 600;
   color: $text-primary;
+  line-height: 1;
+  margin: 0;
 }
 
 .transactions__item-status {
@@ -1010,17 +1055,73 @@
   &--processing {
     color: #73a2f5;
   }
+
+  &--awaiting {
+    color: #73a2f5;
+  }
 }
 
 .transactions__item-purpose-sub {
   font-size: 12px;
   color: $text-secondary;
-  margin-top: 2px;
+  line-height: 1;
+  margin-top: 6px;
+  margin-bottom: 0;
 }
 
-.transactions__item--link:hover .transactions__item-title {
-  // text-decoration: underline;
+// Payment request specific styles
+.transactions__cell--receive-total {
+  font-size: 14px;
+  font-weight: 600;
+  color: $text-primary;
 }
+
+.transactions__cell--received-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.transactions__item-icon--payment-request {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #EEEEEE;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  
+  img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) saturate(100%) invert(47%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%); // Make icon #797A7B
+  }
+}
+
+.transactions__head-cell--right {
+  text-align: right;
+  justify-self: end;
+}
+
+.transactions__item-date-main {
+  font-size: 14px;
+  font-weight: 500;
+  color: $text-secondary;
+  line-height: 1;
+  margin: 0;
+}
+
+.transactions__item-date-sub {
+  font-size: 12px;
+  font-weight: 500;
+  color: $text-secondary;
+  line-height: 1;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
 
 @media (max-width: ($bp-desktop - 1px)) {
   .transactions {
@@ -1056,6 +1157,11 @@
       display: none;
     }
 
+    &--receive-total,
+    &--received-amount {
+      display: none;
+    }
+
     &--date {
       grid-column: 2;
       grid-row: 2;
@@ -1076,7 +1182,3 @@
 }
 
 /* Home page greeting styling (Sora, 20 -> 32 on desktop) */
-.page--home {
-  .page__title {
-  }
-}

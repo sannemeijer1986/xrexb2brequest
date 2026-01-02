@@ -3712,6 +3712,17 @@ body.modal-locked {
   }
 }
 
+[data-panel=payment-request] .transactions__head-row {
+  grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.4fr) minmax(0, 1.4fr) minmax(0, 1.4fr) minmax(0, 2fr) minmax(0, 1.4fr) minmax(0, 1.6fr); /* Payment req. submission */
+  gap: 24px;
+  padding: 0 12px;
+}
+@media (max-width: 1279px) {
+  [data-panel=payment-request] .transactions__head-row {
+    display: none;
+  }
+}
+
 .transactions__head-cell {
   text-transform: none;
 }
@@ -3751,6 +3762,20 @@ body.modal-locked {
   }
 }
 
+[data-panel=payment-request] .transactions__item {
+  grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.4fr) minmax(0, 1.4fr) minmax(0, 1.4fr) minmax(0, 2fr) minmax(0, 1.4fr) minmax(0, 1.6fr);
+  gap: 24px;
+  padding: 0 12px;
+}
+@media (max-width: 1279px) {
+  [data-panel=payment-request] .transactions__item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    gap: 0px 12px;
+    padding: 16px 0;
+  }
+}
+
 .transactions__cell {
   font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   font-size: 14px;
@@ -3775,8 +3800,11 @@ body.modal-locked {
   display: flex;
 }
 .transactions__cell--date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   text-align: right;
-  color: #797A7B;
+  font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   font-weight: 500;
 }
 @media (min-width: 1280px) {
@@ -3812,6 +3840,8 @@ body.modal-locked {
   font-size: 14px;
   font-weight: 600;
   color: #0f172a;
+  line-height: 1;
+  margin: 0;
 }
 
 .transactions__item-status {
@@ -3824,11 +3854,67 @@ body.modal-locked {
 .transactions__item-status--processing {
   color: #73a2f5;
 }
+.transactions__item-status--awaiting {
+  color: #73a2f5;
+}
 
 .transactions__item-purpose-sub {
   font-size: 12px;
   color: #797A7B;
-  margin-top: 2px;
+  line-height: 1;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+.transactions__cell--receive-total {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.transactions__cell--received-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.transactions__item-icon--payment-request {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #EEEEEE;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.transactions__item-icon--payment-request img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) saturate(100%) invert(47%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+}
+
+.transactions__head-cell--right {
+  text-align: right;
+  justify-self: end;
+}
+
+.transactions__item-date-main {
+  font-size: 14px;
+  font-weight: 500;
+  color: #797A7B;
+  line-height: 1;
+  margin: 0;
+}
+
+.transactions__item-date-sub {
+  font-size: 12px;
+  font-weight: 500;
+  color: #797A7B;
+  line-height: 1;
+  margin-top: 6px;
+  margin-bottom: 0;
 }
 
 @media (max-width: 1279px) {
@@ -3857,6 +3943,9 @@ body.modal-locked {
     text-align: right;
   }
   .transactions__cell--type, .transactions__cell--status {
+    display: none;
+  }
+  .transactions__cell--receive-total, .transactions__cell--received-amount {
     display: none;
   }
   .transactions__cell--date {

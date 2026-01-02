@@ -589,13 +589,20 @@ function initSendPayment() {
       const li = paymentList.querySelector('.transactions__item');
       if (!li) return;
       const isSendPanel = panel.getAttribute('data-panel') === 'payment-send';
+      const isRequestPanel = panel.getAttribute('data-panel') === 'payment-request';
 
       const titleEl = li.querySelector('.transactions__item-title');
       const amountEl = li.querySelector('.transactions__cell--amount');
-      const purposeEl = li.querySelector('.transactions__item-purpose');
-      const purposeSubEl = li.querySelector('.transactions__item-purpose-sub');
+      const receiveTotalEl = li.querySelector('.transactions__cell--receive-total');
+      const receivedAmountCell = li.querySelector('.transactions__cell--received-amount');
+      const receivedAmountValueEl = receivedAmountCell ? receivedAmountCell.querySelector('.transactions__item-purpose') : null;
+      const receivedAmountTotalEl = receivedAmountCell ? receivedAmountCell.querySelector('.transactions__item-purpose-sub') : null;
+      const purposeEl = li.querySelector('.transactions__cell--type .transactions__item-purpose');
+      const purposeSubEl = li.querySelector('.transactions__cell--type .transactions__item-purpose-sub');
       const statusEls = li.querySelectorAll('.transactions__item-status');
-      const dateEl = li.querySelector('.transactions__cell--date');
+      const dateCell = li.querySelector('.transactions__cell--date');
+      const dateMainEl = dateCell ? dateCell.querySelector('.transactions__item-date-main') : null;
+      const dateSubEl = dateCell ? dateCell.querySelector('.transactions__item-date-sub') : null;
 
       const setNoData = () => {
         if (titleEl) {
@@ -603,10 +610,14 @@ function initSendPayment() {
           titleEl.style.color = '#797A7B';
         }
         if (amountEl) amountEl.textContent = '';
+        if (receiveTotalEl) receiveTotalEl.textContent = '';
+        if (receivedAmountValueEl) receivedAmountValueEl.textContent = '';
+        if (receivedAmountTotalEl) receivedAmountTotalEl.textContent = '';
         if (purposeEl) purposeEl.textContent = '';
         if (purposeSubEl) purposeSubEl.textContent = '';
-        if (dateEl) dateEl.textContent = '';
-        statusEls.forEach((el) => { if (el) el.textContent = ''; el && el.classList.remove('transactions__item-status--processing', 'transactions__item-status--completed'); });
+        if (dateMainEl) dateMainEl.textContent = '';
+        if (dateSubEl) dateSubEl.textContent = '';
+        statusEls.forEach((el) => { if (el) el.textContent = ''; el && el.classList.remove('transactions__item-status--processing', 'transactions__item-status--completed', 'transactions__item-status--awaiting'); });
       };
 
       // "Send payment" panel always shows "No data", regardless of state
@@ -625,17 +636,49 @@ function initSendPayment() {
 
       if (data) {
         if (titleEl) titleEl.textContent = data.receiverName || 'NovaQuill Ltd';
-        if (amountEl) amountEl.textContent = data.amountPayableFmt || '50,000.00 USD';
+        if (amountEl) {
+          // For payment request: use toBeDeducted (customer pays) or amountPayableFmt
+          amountEl.textContent = (isRequestPanel && data.toBeDeducted) ? data.toBeDeducted : (data.amountPayableFmt || '50,000.00 USD');
+        }
+        // Receive total (you receive) - only for payment request
+        if (isRequestPanel && receiveTotalEl) {
+          receiveTotalEl.textContent = data.receiverGets || '50,000.00 USD';
+        }
+        // Received amount - only for payment request
+        if (isRequestPanel && receivedAmountValueEl && receivedAmountTotalEl) {
+          const receiveTotal = data.receiverGets || '50,000.00 USD';
+          receivedAmountValueEl.textContent = '0.00';
+          receivedAmountTotalEl.textContent = '/ ' + receiveTotal;
+        }
         if (purposeEl) purposeEl.textContent = data.nature || 'Goods purchase';
         if (purposeSubEl) purposeSubEl.textContent = data.docNumber || 'PI-001234';
-        if (dateEl) dateEl.textContent = data.dateTime || '25/11/2025, 15:19:09';
+        // Parse date and time for payment request
+        if (isRequestPanel && dateMainEl && dateSubEl) {
+          const dateTimeStr = data.dateTime || '25/11/2025, 15:19:09';
+          const [datePart, timePart] = dateTimeStr.split(', ');
+          if (datePart) dateMainEl.textContent = datePart.trim();
+          if (timePart) dateSubEl.textContent = timePart.trim();
+        } else if (!isRequestPanel && dateMainEl && dateSubEl) {
+          // For other panels, keep original behavior if needed
+          const dateTimeStr = data.dateTime || '25/11/2025, 15:19:09';
+          const [datePart, timePart] = dateTimeStr.split(', ');
+          if (datePart) dateMainEl.textContent = datePart.trim();
+          if (timePart) dateSubEl.textContent = timePart.trim();
+        }
       }
 
       statusEls.forEach((el) => {
         if (!el) return;
-        el.textContent = state >= 5 ? 'Sent' : 'Processing';
-        el.classList.remove('transactions__item-status--processing', 'transactions__item-status--completed');
-        el.classList.add(state >= 5 ? 'transactions__item-status--completed' : 'transactions__item-status--processing');
+        if (isRequestPanel && state === 4) {
+          // Payment request at state 4: "Awaiting payment"
+          el.textContent = 'Awaiting payment';
+          el.classList.remove('transactions__item-status--processing', 'transactions__item-status--completed', 'transactions__item-status--awaiting');
+          el.classList.add('transactions__item-status--awaiting');
+        } else {
+          el.textContent = state >= 5 ? 'Sent' : 'Processing';
+          el.classList.remove('transactions__item-status--processing', 'transactions__item-status--completed', 'transactions__item-status--awaiting');
+          el.classList.add(state >= 5 ? 'transactions__item-status--completed' : 'transactions__item-status--processing');
+        }
       });
     });
   };
