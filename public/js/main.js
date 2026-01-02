@@ -354,11 +354,121 @@ try {
     }
     document.addEventListener('visibilitychange', ensureState4AmountVisible);
 
-    const toggleDropdown = (e) => {
-      // Only show dropdown on desktop
-      if (window.innerWidth < DESKTOP_BP) return;
+    // Get button text for modal title
+    const getModalTitle = () => {
+      const btnText = btn.querySelector('.header__request-btn__text');
+      return btnText ? btnText.textContent : 'Active request(s)';
+    };
+
+    // Create mobile modal if it doesn't exist
+    let mobileModal = document.getElementById('headerRequestModal');
+    if (!mobileModal) {
+      mobileModal = document.createElement('div');
+      mobileModal.id = 'headerRequestModal';
+      mobileModal.className = 'modal modal--dialog header__request-modal';
+      mobileModal.setAttribute('aria-hidden', 'true');
+      mobileModal.setAttribute('role', 'dialog');
+      mobileModal.setAttribute('aria-modal', 'true');
+      mobileModal.innerHTML = `
+        <div class="modal__dialog">
+          <div class="modal__content">
+            <div class="modal__header header__request-modal__header">
+              <button class="modal__close" data-modal-close aria-label="Close modal">
+                <img src="assets/icon_close.svg" width="24" height="24" alt="close" />
+              </button>
+              <h2 class="header__request-modal__title">${getModalTitle()}</h2>
+            </div>
+            <div class="modal__body header__request-modal__body">
+              ${dropdown.innerHTML}
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(mobileModal);
       
+      // Wire up close button
+      const closeBtn = mobileModal.querySelector('[data-modal-close]');
+      if (closeBtn && typeof window.__closeModal === 'function') {
+        closeBtn.addEventListener('click', () => {
+          window.__closeModal(mobileModal);
+        });
+      }
+      
+      // Close on overlay click
+      mobileModal.addEventListener('click', (e) => {
+        if (e.target === mobileModal && typeof window.__closeModal === 'function') {
+          window.__closeModal(mobileModal);
+        }
+      });
+      
+      // Add click handlers to modal items
+      const modalItems = mobileModal.querySelectorAll('.header__request-dropdown__item');
+      modalItems.forEach((item) => {
+        item.style.cursor = 'pointer';
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          try {
+            if (typeof getPrototypeState === 'function') {
+              const state = getPrototypeState();
+              if (state === 2) {
+                window.location.href = 'customer-details.html';
+              } else if (state === 4) {
+                window.location.href = 'payment-request-details.html';
+              }
+            }
+          } catch (_) {}
+        });
+      });
+    }
+
+    // Sync modal content with dropdown content
+    const syncModalContent = () => {
+      if (mobileModal) {
+        const modalBody = mobileModal.querySelector('.header__request-modal__body');
+        const modalTitle = mobileModal.querySelector('.header__request-modal__title');
+        if (modalBody) {
+          modalBody.innerHTML = dropdown.innerHTML;
+          
+          // Update title
+          if (modalTitle) {
+            modalTitle.textContent = getModalTitle();
+          }
+          
+          // Re-add click handlers to new items
+          const modalItems = modalBody.querySelectorAll('.header__request-dropdown__item');
+          modalItems.forEach((item) => {
+            item.style.cursor = 'pointer';
+            item.addEventListener('click', (e) => {
+              e.stopPropagation();
+              try {
+                if (typeof getPrototypeState === 'function') {
+                  const state = getPrototypeState();
+                  if (state === 2) {
+                    window.location.href = 'customer-details.html';
+                  } else if (state === 4) {
+                    window.location.href = 'payment-request-details.html';
+                  }
+                }
+              } catch (_) {}
+            });
+          });
+        }
+      }
+    };
+
+    const toggleDropdown = (e) => {
       e.stopPropagation();
+      
+      // On mobile, open modal instead
+      if (window.innerWidth < DESKTOP_BP) {
+        syncModalContent();
+        if (typeof window.__openModal === 'function') {
+          window.__openModal(mobileModal);
+        }
+        return;
+      }
+      
+      // Desktop: show dropdown
       const isOpen = dropdown.classList.contains('is-open');
       
       if (isOpen) {
@@ -373,6 +483,13 @@ try {
     };
 
     btn.addEventListener('click', toggleDropdown);
+    
+    // Sync modal content when state changes
+    if (typeof onPrototypeStateChange === 'function') {
+      onPrototypeStateChange(() => {
+        syncModalContent();
+      });
+    }
 
     // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
