@@ -135,6 +135,13 @@
                 <div id="purpose-others-error" class="form-error" hidden>This field is required</div>
               </div>
 
+              <div class="form__field form__field--select" id="expiresAfter-field">
+                <label for="expiresAfter">This payment request expires after</label>
+                <select id="expiresAfter" class="select-" name="expiresAfter" disabled>
+                  <option value="1 week" selected>1 week</option>
+                </select>
+              </div>
+
             </form>
 
             <h2 class="card__title">Amount and fees</h2>
@@ -178,7 +185,7 @@
                       </span>
                       <span class="fee-option__content">
                         <span class="fee-option__title">USD account</span>
-                        <small class="muted">250,000.00 balance</small>
+                        <small class="muted">999,000,000.00 balance</small>
                       </span>
                       <input type="radio" name="deduct" value="USD" checked />
                       <span class="fee-option__check" aria-hidden="true"></span>
@@ -189,7 +196,7 @@
                       </span>
                       <span class="fee-option__content">      
                         <span class="fee-option__title">USDT account</span>
-                        <small class="muted">250,000.00 balance</small>
+                        <small class="muted">999,000,000.00 balance</small>
                       </span>
                       <input type="radio" name="deduct" value="USDT" />
                       <span class="fee-option__check" aria-hidden="true"></span>
@@ -220,6 +227,7 @@
                   <label class="fees-label">
                     <span>Service fee (0.50%) paid by</span>
                     <span class="fees-label__min">min. 60 USD</span>
+                    <span class="fees-label__max">max 2k USD</span>
                   </label>
                   <div class="fee-options">
                     <label class="fee-option">
@@ -525,10 +533,12 @@
                   <span class="muted">
                     Service fee
                     <span class="service-fee__min-label">min. 60 USD</span>
+                    <span class="service-fee__max-label">max 2k USD</span>
                   </span>
                   <strong>
                     <span class="service-fee__percentage">0.50%</span>
                     <span class="service-fee__minimum">60.00 USD</span>
+                    <span class="service-fee__maximum">2,000.00 USD</span>
                   </strong>
                 </div>
                 <div class="summary-pair summary-pair--sub" data-summary="service-payer">
@@ -536,7 +546,7 @@
                   <strong>0.00 USDT</strong>
                 </div>
                 <div class="summary-pair summary-pair--sub" data-summary="service-payee">
-                  <span class="muted">0% paid by receiver</span>
+                  <span class="muted">0% paid by customer</span>
                   <strong>0.00 USD</strong>
                 </div>
                 <div class="summary-separator"></div>
@@ -592,7 +602,7 @@
                 <strong id="fd-payer">-</strong>
               </div>
               <div class="summary-pair">
-                <span class="muted" id="fd-receiver-label">Fee paid by receiver</span>
+                <span class="muted" id="fd-receiver-label">Fee paid by customer</span>
                 <strong id="fd-receiver">-</strong>
               </div>
               <div class="summary-separator"></div>

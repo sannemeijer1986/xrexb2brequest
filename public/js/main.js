@@ -11,11 +11,18 @@ function calculateFees(amount, payerRate, receiverRate, feeRate) {
     feeRate = getFeeRate();
   }
   const MIN_SERVICE_FEE = 60;
+  const MAX_SERVICE_FEE = 2000;
   const calculatedServiceFee = amount * feeRate;
-  const actualServiceFee = (amount === 0 || (calculatedServiceFee > 0 && calculatedServiceFee < MIN_SERVICE_FEE)) 
-    ? MIN_SERVICE_FEE 
-    : calculatedServiceFee;
+  let actualServiceFee;
+  if (amount === 0 || (calculatedServiceFee > 0 && calculatedServiceFee < MIN_SERVICE_FEE)) {
+    actualServiceFee = MIN_SERVICE_FEE;
+  } else if (calculatedServiceFee > MAX_SERVICE_FEE) {
+    actualServiceFee = MAX_SERVICE_FEE;
+  } else {
+    actualServiceFee = calculatedServiceFee;
+  }
   const isBelowMinimum = amount === 0 || (calculatedServiceFee > 0 && calculatedServiceFee < MIN_SERVICE_FEE);
+  const isAboveMaximum = calculatedServiceFee > MAX_SERVICE_FEE;
   
   // Distribute the actual service fee according to fee distribution rates
   // payerRate and receiverRate are proportions of the feeRate (e.g., 0.01, 0.005, 0)
@@ -30,7 +37,7 @@ function calculateFees(amount, payerRate, receiverRate, feeRate) {
     receiverFee = actualServiceFee * (receiverRate / feeRate);
   }
   
-  return { payerFee, receiverFee, isBelowMinimum, actualServiceFee };
+  return { payerFee, receiverFee, isBelowMinimum, isAboveMaximum, actualServiceFee };
 }
 
 const PROTOTYPE_STATE_KEY = 'xrexb2b.state.v1';
@@ -970,12 +977,13 @@ function initSendPayment() {
     return selected ? selected.value : 'you';
   };
 
-  const setServiceBreakdown = (payerPctAbs, payeePctAbs, hidePercentage = false) => {
+  const setServiceBreakdown = (payerPctAbs, payeePctAbs, hidePercentage = false, isRequestPayment = false) => {
     // Re-query elements to ensure we have fresh references
     const payerRow = (summaryContainer || document).querySelector('[data-summary="service-payer"]');
     const payeeRow = (summaryContainer || document).querySelector('[data-summary="service-payee"]');
     const payerLabel = payerRow && payerRow.querySelector('.muted');
     const payeeLabel = payeeRow && payeeRow.querySelector('.muted');
+    const receiverLabel = isRequestPayment ? 'customer' : 'receiver';
     if (payerLabel) {
       if (hidePercentage) {
         payerLabel.textContent = 'Paid by you';
@@ -985,9 +993,9 @@ function initSendPayment() {
     }
     if (payeeLabel) {
       if (hidePercentage) {
-        payeeLabel.textContent = 'Paid by receiver';
+        payeeLabel.textContent = `Paid by ${receiverLabel}`;
       } else {
-        payeeLabel.textContent = `${Number(payeePctAbs).toFixed(2)}% paid by receiver`;
+        payeeLabel.textContent = `${Number(payeePctAbs).toFixed(2)}% paid by ${receiverLabel}`;
       }
     }
   };
@@ -1005,8 +1013,8 @@ function initSendPayment() {
     else if (mode === 'receiver') { payerRate = 0; receiverRate = feeRate; }
     else { payerRate = feeRate / 2; receiverRate = feeRate / 2; }
 
-    // Calculate fees with minimum fee logic
-    const { payerFee, receiverFee, isBelowMinimum } = calculateFees(amount, payerRate, receiverRate, feeRate);
+    // Calculate fees with minimum and maximum fee logic
+    const { payerFee, receiverFee, isBelowMinimum, isAboveMaximum } = calculateFees(amount, payerRate, receiverRate, feeRate);
 
     // For request-payment: logic is inverted (you receive, customer pays)
     // For send-payment: you pay, receiver gets
@@ -1023,7 +1031,7 @@ function initSendPayment() {
     // Percentages shown are absolute share of the amount (e.g., 0.5%)
     const payerPctAbs = payerRate * 100;   // Convert to percentage (e.g., 0.0025 -> 0.25)
     const payeePctAbs = receiverRate * 100;
-    setServiceBreakdown(payerPctAbs, payeePctAbs, isBelowMinimum);
+    setServiceBreakdown(payerPctAbs, payeePctAbs, isBelowMinimum || isAboveMaximum, isRequestPayment);
 
     const payerCurrency = getPayerCurrency();
     const showConversion = payerCurrency !== payeeCurrency;
@@ -1049,38 +1057,9 @@ function initSendPayment() {
     // Amount per-tx limit inline error + input underline color
     const MIN_TX_LIMIT = 50;
     const PER_TX_LIMIT = 1000000;
-    // For request-payment: calculate minimum amount to prevent "You receive" from going negative
-    let minAmountForRequest = MIN_TX_LIMIT;
-    if (isRequestPayment) {
-      // Calculate the minimum amount needed so that "You receive" (amount - payerFee) >= 0
-      // payerFee depends on the fee split mode
-      const feeRate = getFeeRate();
-      const MIN_SERVICE_FEE = 60;
-      if (mode === 'you') {
-        // "Paid by you": payerFee = full fee, so amount must be >= fee
-        // If amount < 12000, fee = 60, so amount >= 60
-        // If amount >= 12000, fee = amount * 0.005, so amount >= amount * 0.005 (always true)
-        // So minimum is 60 when fee is at minimum
-        minAmountForRequest = MIN_SERVICE_FEE;
-      } else if (mode === 'split') {
-        // "Share 50/50": payerFee = half fee, so amount must be >= half fee
-        // If amount < 12000, fee = 60, so half fee = 30, so amount >= 30
-        // If amount >= 12000, fee = amount * 0.005, so half fee = amount * 0.0025, so amount >= amount * 0.0025 (always true)
-        // So minimum is 30 when fee is at minimum
-        minAmountForRequest = MIN_SERVICE_FEE / 2;
-      } else {
-        // "Paid by customer": payerFee = 0, so no minimum needed (payeeGets = amount)
-        minAmountForRequest = MIN_TX_LIMIT;
-      }
-      // Also check actual calculated fee for higher amounts
-      const calculatedFee = amount * feeRate;
-      const actualFee = calculatedFee < MIN_SERVICE_FEE ? MIN_SERVICE_FEE : calculatedFee;
-      const actualPayerFee = mode === 'you' ? actualFee : (mode === 'split' ? actualFee / 2 : 0);
-      if (amount > 0 && amount < actualPayerFee) {
-        // Amount is less than the payer fee, which would make "You receive" negative
-        minAmountForRequest = Math.max(minAmountForRequest, actualPayerFee);
-      }
-    }
+    // For request-payment: always use 60 as minimum per transaction
+    // For send-payment: use 50 as minimum per transaction
+    const minAmountForRequest = isRequestPayment ? 60 : MIN_TX_LIMIT;
     const amountBelowMinTx = amount > 0 && amount < minAmountForRequest;
     const amountOverPerTx = amount >= PER_TX_LIMIT;
     const amountMeta = document.querySelector('.amount-meta');
@@ -1142,20 +1121,40 @@ function initSendPayment() {
     }
     if (summaryRows.serviceTitle) {
       // Only show the label; totals are displayed in the breakdown rows.
-      // Styling is handled via CSS using the `.service-fee--min` class.
+      // Styling is handled via CSS using the `.service-fee--min` and `.service-fee--max` classes.
       const row = summaryRows.serviceTitle;
       const pctEl = row.querySelector('.service-fee__percentage');
       const minEl = row.querySelector('.service-fee__minimum');
+      const maxEl = row.querySelector('.service-fee__maximum');
 
-      if (pctEl && minEl) {
-        if (isBelowMinimum) {
-          row.classList.add('service-fee--min');
-          pctEl.textContent = `${(feeRate * 100).toFixed(2)}%`;
-          // Use the fixed minimum service fee amount (60.00 USD) for display
-          minEl.textContent = `${formatAmount(60, 'USD')}`;
-        } else {
-          row.classList.remove('service-fee--min');
-          pctEl.textContent = `${(feeRate * 100).toFixed(2)}%`;
+      if (pctEl) {
+        // Handle minimum fee state
+        if (minEl) {
+          if (isBelowMinimum) {
+            row.classList.add('service-fee--min');
+            row.classList.remove('service-fee--max');
+            pctEl.textContent = `${(feeRate * 100).toFixed(2)}%`;
+            // Use the fixed minimum service fee amount (60.00 USD) for display
+            minEl.textContent = `${formatAmount(60, 'USD')}`;
+          } else {
+            row.classList.remove('service-fee--min');
+          }
+        }
+        
+        // Handle maximum fee state
+        if (maxEl) {
+          if (isAboveMaximum) {
+            row.classList.add('service-fee--max');
+            row.classList.remove('service-fee--min');
+            pctEl.textContent = `${(feeRate * 100).toFixed(2)}%`;
+            // Use the fixed maximum service fee amount (2,000.00 USD) for display
+            maxEl.textContent = `${formatAmount(2000, 'USD')}`;
+          } else {
+            row.classList.remove('service-fee--max');
+            if (!isBelowMinimum) {
+              pctEl.textContent = `${(feeRate * 100).toFixed(2)}%`;
+            }
+          }
         }
       }
     }
@@ -1243,8 +1242,9 @@ function initSendPayment() {
     setText('fd-getspaid', formatAmount(payeeGets, payeeCurrency));
     const payerPctStr = (payerRate * 100).toFixed(2);
     const recvPctStr  = (receiverRate * 100).toFixed(2);
+    const receiverLabel = isRequestPayment ? 'customer' : 'receiver';
     setText('fd-payer-label', `${payerPctStr}% paid by you`);
-    setText('fd-receiver-label', `${recvPctStr}% paid by receiver`);
+    setText('fd-receiver-label', `${recvPctStr}% paid by ${receiverLabel}`);
   };
 
   const updateNaturePurpose = () => {
@@ -2028,8 +2028,8 @@ function initSendPayment() {
       // Payer currency
       const payerCurrency = Array.from(document.querySelectorAll('input[type="radio"][name="deduct"]')).find(r => r.checked)?.value || 'USD';
       const payeeCurrency = 'USD';
-      // Calculate fees with minimum fee logic
-      const { payerFee, receiverFee, isBelowMinimum, actualServiceFee } = calculateFees(amount, payerRate, receiverRate, feeRate);
+      // Calculate fees with minimum and maximum fee logic
+      const { payerFee, receiverFee, isBelowMinimum, isAboveMaximum, actualServiceFee } = calculateFees(amount, payerRate, receiverRate, feeRate);
       // For request-payment: logic is inverted (you receive, customer pays)
       // For send-payment: you pay, receiver gets
       const isRequestPayment = window.location.pathname.includes('request-payment');
@@ -2105,14 +2105,16 @@ function initSendPayment() {
         amountPayableFmt: fmt(amount, payeeCurrency),
         deductedFrom: `${payerCurrency} account`,
         feePct: `${(feeRate*100).toFixed(2)}%`,
-        payerShareLabel: isBelowMinimum ? 'Paid by you' : `${(payerRate*100).toFixed(2)}% paid by you`,
+        payerShareLabel: (isBelowMinimum || isAboveMaximum) ? 'Paid by you' : `${(payerRate*100).toFixed(2)}% paid by you`,
         payerShareAmt: fmt(payerFee, payerCurrency),
-        receiverShareLabel: isBelowMinimum ? 'Paid by receiver' : `${(receiverRate*100).toFixed(2)}% paid by receiver`,
+        receiverShareLabel: (isBelowMinimum || isAboveMaximum) ? `Paid by ${isRequestPayment ? 'customer' : 'receiver'}` : `${(receiverRate*100).toFixed(2)}% paid by ${isRequestPayment ? 'customer' : 'receiver'}`,
         receiverShareAmt: fmt(receiverFee, payeeCurrency),
         toBeDeducted: fmt(youPay, payerCurrency),
         receiverGets: fmt(payeeGets, payeeCurrency),
         serviceMinApplied: !!isBelowMinimum,
+        serviceMaxApplied: !!isAboveMaximum,
         serviceMinAmount: actualServiceFee,
+        serviceMaxAmount: actualServiceFee,
         conversion: payerCurrency !== payeeCurrency ? `1 ${payerCurrency} = 1 ${payeeCurrency}` : '',
         nature: natureLabel,
         purpose: purposeLabel,
@@ -2344,8 +2346,8 @@ if (document.readyState === 'loading') {
           // Payer currency
           const payerCurrency = Array.from(document.querySelectorAll('input[type="radio"][name="deduct"]')).find(r => r.checked)?.value || 'USD';
           const payeeCurrency = 'USD';
-          // Calculate fees with minimum fee logic
-          const { payerFee, receiverFee, isBelowMinimum } = calculateFees(amount, payerRate, receiverRate, feeRate);
+          // Calculate fees with minimum and maximum fee logic
+          const { payerFee, receiverFee, isBelowMinimum, isAboveMaximum, actualServiceFee } = calculateFees(amount, payerRate, receiverRate, feeRate);
           // For request-payment: logic is inverted (you receive, customer pays)
           // For send-payment: you pay, receiver gets
           const isRequestPayment = window.location.pathname.includes('request-payment');
@@ -2362,14 +2364,16 @@ if (document.readyState === 'loading') {
             amountPayableFmt: fmt(amount, payeeCurrency),
             deductedFrom: `${payerCurrency} account`,
             feePct: `${(feeRate*100).toFixed(2)}%`,
-            payerShareLabel: isBelowMinimum ? 'Paid by you' : `${(payerRate*100).toFixed(2)}% paid by you`,
+            payerShareLabel: (isBelowMinimum || isAboveMaximum) ? 'Paid by you' : `${(payerRate*100).toFixed(2)}% paid by you`,
             payerShareAmt: fmt(payerFee, payerCurrency),
-            receiverShareLabel: isBelowMinimum ? 'Paid by receiver' : `${(receiverRate*100).toFixed(2)}% paid by receiver`,
+            receiverShareLabel: (isBelowMinimum || isAboveMaximum) ? `Paid by ${isRequestPayment ? 'customer' : 'receiver'}` : `${(receiverRate*100).toFixed(2)}% paid by ${isRequestPayment ? 'customer' : 'receiver'}`,
             receiverShareAmt: fmt(receiverFee, payeeCurrency),
             toBeDeducted: fmt(youPay, payerCurrency),
             receiverGets: fmt(payeeGets, payeeCurrency),
         serviceMinApplied: !!isBelowMinimum,
+        serviceMaxApplied: !!isAboveMaximum,
         serviceMinAmount: actualServiceFee,
+        serviceMaxAmount: actualServiceFee,
             conversion: payerCurrency !== payeeCurrency ? `1 ${payerCurrency} = 1 ${payeeCurrency}` : '',
             dateTime: new Date().toLocaleString('en-GB', { hour12: false }),
             status: 'Processing',

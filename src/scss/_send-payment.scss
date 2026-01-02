@@ -181,7 +181,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  border: 1px solid $border-color;
+  border: 0px solid $border-color;
   border-radius: $radius-md;
   background: #fff;
   text-align: left;
@@ -192,9 +192,14 @@
 }
 // On Send page this control is not interactive; reflect that in affordances
 .page--send .recipient-select {
-  cursor: not-allowed;
+  cursor: default;
   background-color: #FCFCFC;
 }
+
+.page--send select {
+  cursor: pointer;
+}
+
 .page--send .recipient-select:focus,
 .page--send .recipient-select:active {
   outline: none;
@@ -563,7 +568,8 @@
     gap: 8px;
   }
 
-  .fees-label__min {
+  .fees-label__min,
+  .fees-label__max {
     margin-left: auto;
     font-size: 12px;
     font-weight: 400;
@@ -576,6 +582,11 @@
 // Service fee summary (min fee state)
 .service-fee__min-label,
 .service-fee__minimum {
+  display: none;
+}
+
+.service-fee__max-label,
+.service-fee__maximum {
   display: none;
 }
 
@@ -593,6 +604,28 @@
   }
 
   .service-fee__min-label {
+    display: inline;
+    font-size: 12px;
+    font-weight: 400;
+    color: #BCBDBD;
+    margin-left: 4px;
+  }
+}
+
+.service-fee--max {
+  .service-fee__percentage {
+    text-decoration: line-through;
+    color: #BCBDBD;
+    font-weight: 400;
+    font-size: 12px;
+    margin-right: 4px;
+  }
+
+  .service-fee__maximum {
+    display: inline;
+  }
+
+  .service-fee__max-label {
     display: inline;
     font-size: 12px;
     font-weight: 400;
@@ -793,6 +826,40 @@
 #docNotes.is-filled {
   font-weight: 600;
   color: $text-primary;
+}
+
+// Expires after field - disabled select with custom styling
+#expiresAfter-field {
+  label[for="expiresAfter"] {
+    font-family: $font-family-sans;
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-secondary;
+    
+    @media (min-width: $bp-desktop) {
+      font-size: 14px;
+    }
+  }
+  
+  .select-expires-after {
+    opacity: 1;
+    background: #F8F8F8;
+    border-color: $border-color-hard;
+    color: $text-primary;
+    font-weight: 700;
+    cursor: not-allowed;
+    font-size: 14px;
+    height: 60px;
+    background-image: url('../assets/chevron-down-rounded-disabled.svg');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px 20px;
+    
+    @media (min-width: $bp-desktop) {
+      font-size: 16px;
+      height: 74px;
+    }
+  }
 }
 
 // Payment methods info section
