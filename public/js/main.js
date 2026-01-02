@@ -2567,6 +2567,7 @@ if (document.readyState === 'loading') {
   // Add class to page for CSS targeting
   if (isSelectCustomer) {
     page.classList.add('page--select-customer');
+    
   }
 
   const STATUS_META = {
@@ -2601,7 +2602,17 @@ if (document.readyState === 'loading') {
   const getItemsForState = (state) => {
     if (state <= 1) return [];
     if (state === 2) return STATE_ITEMS[2];
-    if (state >= 3) return STATE_ITEMS[3];
+    if (state >= 3) {
+      const items = STATE_ITEMS[3];
+      // For select-customer page, filter out Customer X, Y, Z when state is 3 or higher
+      if (isSelectCustomer && state >= 3) {
+        return items.filter((item) => {
+          const title = item.title || '';
+          return title !== 'Customer X' && title !== 'Customer Y' && title !== 'Customer Z';
+        });
+      }
+      return items;
+    }
     return [];
   };
 

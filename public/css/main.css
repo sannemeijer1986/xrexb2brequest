@@ -1809,6 +1809,13 @@ input[type=number] {
     display: none;
   }
 }
+html[data-prototype-state=state-3] .cp-list .cp-item--hide-state-3,
+html[data-prototype-state=state-4] .cp-list .cp-item--hide-state-3,
+html[data-prototype-state=state-5] .cp-list .cp-item--hide-state-3,
+html[data-prototype-state=state-6] .cp-list .cp-item--hide-state-3 {
+  display: none !important;
+}
+
 @media (min-width: 1280px) {
   .page--select-customer .cp-item__email,
   .page--select-customer .cp-item__customer-number {

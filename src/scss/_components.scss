@@ -425,6 +425,14 @@
   }
 }
 
+// Hide Customer X, Y, Z when prototype state is 3 or higher
+html[data-prototype-state="state-3"] .cp-list .cp-item--hide-state-3,
+html[data-prototype-state="state-4"] .cp-list .cp-item--hide-state-3,
+html[data-prototype-state="state-5"] .cp-list .cp-item--hide-state-3,
+html[data-prototype-state="state-6"] .cp-list .cp-item--hide-state-3 {
+  display: none !important;
+}
+
 // Desktop: hide email and customer number inside content for select-customer
 @media (min-width: $bp-desktop) {
   .page--select-customer .cp-item__email,
