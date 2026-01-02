@@ -61,7 +61,7 @@
     <main class="page page--send">
       <div class="container">
         <section class="page__header page__header--crumb">
-          <a class="crumb" href="select-counterparty.html" aria-label="Back to Select counterparty">
+          <a class="crumb" href="select-customer.html" aria-label="Back to Select customer">
             <picture>
               <source media="(min-width: 1280px)" srcset="assets/icon_header_back.svg" />
               <img src="assets/icon_header_back_mobile.svg" width="32" height="32" alt="">
@@ -86,7 +86,7 @@
                   </div>
                   <button id="pay-to" type="button" class="recipient-select" aria-haspopup="listbox" aria-expanded="false">
                     <span class="recipient-select__avatar">
-                      <img src="assets/icon_bank_cp.svg" alt="" />
+                      <img src="assets/outline_office_new.svg" alt="" />
                     </span>
                     <span class="recipient-select__content">
                       <span class="recipient-select__title">NovaQuill Ltd</span>
@@ -168,9 +168,9 @@
                 </div> -->
               </div>
 
-              <div class="form__row">
+              <div class="form__row" style="display: none;">
                 <div class="form__field form__field--fees">
-                  <label>Deduct from</label>
+                  <label>Receive funds in</label>
                   <div class="fee-options fee-options--deduct" id="deduct-options">
                     <label class="fee-option">
                       <span class="fee-option__icon fee-option__icon--deduct">
@@ -218,7 +218,7 @@
               <div class="form__row">
                 <div class="form__field form__field--fees">
                   <label class="fees-label">
-                    <span>Service fee (1.00%) paid by</span>
+                    <span>Service fee (0.50%) paid by</span>
                     <span class="fees-label__min">min. 60 USD</span>
                   </label>
                   <div class="fee-options">
@@ -228,7 +228,7 @@
                       </span>
                       <span class="fee-option__content">
                         <span class="fee-option__title">Paid by you</span>
-                        <small class="muted">Added to payment amount</small>
+                        <small class="muted">Deducted from your receive amount</small>
                       </span>
                       <input type="radio" name="fee" value="you" checked />
                       <span class="fee-option__check" aria-hidden="true"></span>
@@ -239,7 +239,7 @@
                       </span>
                       <span class="fee-option__content">      
                         <span class="fee-option__title">Share 50/50</span>
-                        <small class="muted">Partially added to payment amount and deducted from total to send</small>
+                        <small class="muted">Partially deducted from your receive amount and added to request amount</small>
                       </span>
                       <input type="radio" name="fee" value="split" />
                       <span class="fee-option__check" aria-hidden="true"></span>
@@ -249,8 +249,8 @@
                         <img src="assets/icon_fees_0_100.svg" width="28" height="28" alt="" />
                       </span>
                       <span class="fee-option__content">
-                        <span class="fee-option__title">Paid by receiver</span>
-                        <small class="muted">Deducted from total to send</small>
+                        <span class="fee-option__title">Paid by customer</span>
+                        <small class="muted">Added to amount customer pays</small>
                       </span>
                       <input type="radio" name="fee" value="receiver" />
                       <span class="fee-option__check" aria-hidden="true"></span>
@@ -454,20 +454,19 @@
           </div>
 
           <aside class="grid__col grid__col--sidebar">
-            <h3 class="card__title">Payment preview</h3>
+            <h3 class="card__title">Preview</h3>
             <div class="card card--section card--summary">
               <div class="summary-recipient">
                 <span class="recipient-select__avatar">
-                  <img src="assets/icon_bank_cp.svg" alt="" />
+                  <img src="assets/outline_office_new.svg" alt="" />
                 </span>
                 <span class="recipient-select__content">
                   <span class="recipient-select__title">To NovaQuill Ltd</span>
-                  <span class="recipient-select__subtitle">(CIMB) 012-345678-9</span>
-                  <span class="recipient-select__currency show-mobile-only">USD account</span>
+                  <span class="recipient-select__subtitle">payments@novaquill.com</span>
+                  <span class="recipient-select__currency show-mobile-only">CC-123456</span>
                 </span>
                 <span class="summary-recipient__currency">
-                  <span class="summary-recipient__currency-text show-desktop-only">USD</span>
-                  <img src="assets/icon_USD.svg" alt="" />
+                  <span class="summary-recipient__currency-text show-desktop-only">CC-123456</span>
                 </span>
               </div>
 
@@ -493,7 +492,7 @@
                   <strong>0.00 USD</strong>
                 </div>
                 <div class="summary-pair">
-                  <span class="muted">Deduct from</span>
+                  <span class="muted">Receive funds in</span>
                   <div class="convertrate-wrapper">
                     <strong>USD account</strong>
                     <span id="fees-details-open" class="summary-title-link" style="display:none;">Conversion rate: 1 USDT = 1 USD</span>
@@ -509,7 +508,7 @@
                     <span class="service-fee__min-label">min. 60 USD</span>
                   </span>
                   <strong>
-                    <span class="service-fee__percentage">1.00%</span>
+                    <span class="service-fee__percentage">0.50%</span>
                     <span class="service-fee__minimum">60.00 USD</span>
                   </strong>
                 </div>
@@ -523,18 +522,18 @@
                 </div>
                 <div class="summary-separator"></div>
                 <div class="summary-pair summary-pair--yourtotal">
-                  <span class="muted">You pay</span>
+                  <span class="muted">Customer pays</span>
                   <strong>0.00 USD</strong>
                 </div>
                 <div class="summary-pair summary-pair--totalreceive">
-                  <span class="muted">Send to receiver</span>
+                  <span class="muted">You receive</span>
                   <strong class="summary-total--primary">0.00 USD</strong>
                 </div>
               </div>
-              <button id="confirm-send" class="btn btn--primary btn--block" aria-disabled="true" disabled>Review and Pay</button>
+              <button id="confirm-send" class="btn btn--primary btn--block" aria-disabled="true" disabled>Review & Request</button>
               <div id="confirm-error" class="form-error form-error--cta" hidden>Please complete all required fields</div>
-              <div class="summary-note">Received amount may vary due to bank fees. <br />Processing typically takes 1–5 business days.<br />
-                Receiver will be billed in USD.</div>
+              <div class="summary-note">Billed in USD: you will always receive USD.<br />Payer options: USD (bank transfer) or USDT.<br />
+                Bank transfers typically take 1–5 business days.</div>
             </div>
           </aside>
         </section>
@@ -549,7 +548,7 @@
           <span class="ms-label">Send to receiver</span>
           <strong id="mobileStickyAmount">0.00 USD<img src="assets/icon_chevron_right_blue.svg" alt="" width="12" height="12" class="ms-chevron"></strong>
         </button>
-        <button id="confirm-send-sticky" class="btn btn--primary ms-review" aria-disabled="true" disabled>Review and Pay</button>
+        <button id="confirm-send-sticky" class="btn btn--primary ms-review" aria-disabled="true" disabled>Review & Request</button>
       </div>
     </div>
 
@@ -600,7 +599,7 @@
       <div class="modal-wrapper">
         <div class="modal-content">
           <div class="modal-header">
-            <h2 id="mobileSummaryTitle">Payment preview</h2>
+            <h2 id="mobileSummaryTitle">Preview</h2>
             <button class="modal-close" data-modal-close aria-label="Close modal">
               <img src="assets/icon_close.svg" width="24" height="24" alt="close">
             </button>

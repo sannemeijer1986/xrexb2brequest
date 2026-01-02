@@ -1,6 +1,15 @@
+// Helper function to get fee rate based on current page
+function getFeeRate() {
+  const isRequestPayment = window.location.pathname.includes('request-payment');
+  return isRequestPayment ? 0.005 : 0.01; // 0.50% for request-payment, 1.00% for send-payment
+}
+
 // Helper function to calculate fees with minimum fee logic (global scope)
-function calculateFees(amount, payerRate, receiverRate) {
-  const feeRate = 0.01; // 1%
+function calculateFees(amount, payerRate, receiverRate, feeRate) {
+  // If feeRate is not provided, get it based on current page
+  if (feeRate === undefined) {
+    feeRate = getFeeRate();
+  }
   const MIN_SERVICE_FEE = 60;
   const calculatedServiceFee = amount * feeRate;
   const actualServiceFee = (amount === 0 || (calculatedServiceFee > 0 && calculatedServiceFee < MIN_SERVICE_FEE)) 
@@ -10,7 +19,7 @@ function calculateFees(amount, payerRate, receiverRate) {
   
   // Distribute the actual service fee according to fee distribution rates
   // payerRate and receiverRate are proportions of the feeRate (e.g., 0.01, 0.005, 0)
-  // The total of payerRate + receiverRate always equals feeRate (0.01)
+  // The total of payerRate + receiverRate always equals feeRate
   let payerFee, receiverFee;
   if (payerRate === 0 && receiverRate === 0) {
     payerFee = 0;
@@ -687,11 +696,11 @@ function initSendPayment() {
     servicePayer: (summaryContainer || document).querySelector('[data-summary="service-payer"]'),
     servicePayee: (summaryContainer || document).querySelector('[data-summary="service-payee"]'),
     amountPayable: findSummaryRow('Payment amount'),
-    deductFrom: findSummaryRow('Deduct from'),
+    deductFrom: findSummaryRow('Receive funds in') || findSummaryRow('Deduct from'),
     nature: findSummaryRow('Nature'),
     purpose: findSummaryRow('Purpose'),
-    youPay: findSummaryRow('You pay'),
-    payeeReceives: findSummaryRow('Send to receiver'),
+    youPay: findSummaryRow('Customer pays') || findSummaryRow('You pay'),
+    payeeReceives: findSummaryRow('You receive') || findSummaryRow('Send to receiver'),
     // Conversion row label starts with \"Conversion\" (e.g. \"Conversion rate\")
     conversion: findSummaryRowStartsWith('Conversion'),
   };
@@ -990,23 +999,30 @@ function initSendPayment() {
     const mode = getFeeMode();
 
     // Determine fee shares
-    const feeRate = 0.01; // 1%
+    const feeRate = getFeeRate();
     let payerRate = 0, receiverRate = 0;
     if (mode === 'you') { payerRate = feeRate; receiverRate = 0; }
     else if (mode === 'receiver') { payerRate = 0; receiverRate = feeRate; }
     else { payerRate = feeRate / 2; receiverRate = feeRate / 2; }
 
     // Calculate fees with minimum fee logic
-    const { payerFee, receiverFee, isBelowMinimum } = calculateFees(amount, payerRate, receiverRate);
+    const { payerFee, receiverFee, isBelowMinimum } = calculateFees(amount, payerRate, receiverRate, feeRate);
 
-    const youPay = amount + payerFee;
-    const payeeGets = amount - receiverFee;
+    // For request-payment: logic is inverted (you receive, customer pays)
+    // For send-payment: you pay, receiver gets
+    const isRequestPayment = window.location.pathname.includes('request-payment');
+    const youPay = isRequestPayment ? amount + receiverFee : amount + payerFee; // Customer pays (request) or You pay (send)
+    let payeeGets = isRequestPayment ? amount - payerFee : amount - receiverFee; // You receive (request) or Receiver gets (send)
+    // Prevent "You receive" from going negative (clamp to 0)
+    if (isRequestPayment && payeeGets < 0) {
+      payeeGets = 0;
+    }
     const subtotal = amount; // before fees
 
     // Update labels and values
     // Percentages shown are absolute share of the amount (e.g., 0.5%)
-    const payerPctAbs = Math.round(payerRate * 1000) / 10;   // one decimal
-    const payeePctAbs = Math.round(receiverRate * 1000) / 10;
+    const payerPctAbs = payerRate * 100;   // Convert to percentage (e.g., 0.0025 -> 0.25)
+    const payeePctAbs = receiverRate * 100;
     setServiceBreakdown(payerPctAbs, payeePctAbs, isBelowMinimum);
 
     const payerCurrency = getPayerCurrency();
@@ -1033,7 +1049,39 @@ function initSendPayment() {
     // Amount per-tx limit inline error + input underline color
     const MIN_TX_LIMIT = 50;
     const PER_TX_LIMIT = 1000000;
-    const amountBelowMinTx = amount > 0 && amount < MIN_TX_LIMIT;
+    // For request-payment: calculate minimum amount to prevent "You receive" from going negative
+    let minAmountForRequest = MIN_TX_LIMIT;
+    if (isRequestPayment) {
+      // Calculate the minimum amount needed so that "You receive" (amount - payerFee) >= 0
+      // payerFee depends on the fee split mode
+      const feeRate = getFeeRate();
+      const MIN_SERVICE_FEE = 60;
+      if (mode === 'you') {
+        // "Paid by you": payerFee = full fee, so amount must be >= fee
+        // If amount < 12000, fee = 60, so amount >= 60
+        // If amount >= 12000, fee = amount * 0.005, so amount >= amount * 0.005 (always true)
+        // So minimum is 60 when fee is at minimum
+        minAmountForRequest = MIN_SERVICE_FEE;
+      } else if (mode === 'split') {
+        // "Share 50/50": payerFee = half fee, so amount must be >= half fee
+        // If amount < 12000, fee = 60, so half fee = 30, so amount >= 30
+        // If amount >= 12000, fee = amount * 0.005, so half fee = amount * 0.0025, so amount >= amount * 0.0025 (always true)
+        // So minimum is 30 when fee is at minimum
+        minAmountForRequest = MIN_SERVICE_FEE / 2;
+      } else {
+        // "Paid by customer": payerFee = 0, so no minimum needed (payeeGets = amount)
+        minAmountForRequest = MIN_TX_LIMIT;
+      }
+      // Also check actual calculated fee for higher amounts
+      const calculatedFee = amount * feeRate;
+      const actualFee = calculatedFee < MIN_SERVICE_FEE ? MIN_SERVICE_FEE : calculatedFee;
+      const actualPayerFee = mode === 'you' ? actualFee : (mode === 'split' ? actualFee / 2 : 0);
+      if (amount > 0 && amount < actualPayerFee) {
+        // Amount is less than the payer fee, which would make "You receive" negative
+        minAmountForRequest = Math.max(minAmountForRequest, actualPayerFee);
+      }
+    }
+    const amountBelowMinTx = amount > 0 && amount < minAmountForRequest;
     const amountOverPerTx = amount >= PER_TX_LIMIT;
     const amountMeta = document.querySelector('.amount-meta');
     const amountMetaText = amountMeta?.querySelector('.amount-meta__text');
@@ -1050,11 +1098,13 @@ function initSendPayment() {
       if (amountRequiredActive) {
         amountMetaText.textContent = REQUIRED_ERROR_TEXT;
       } else if (amountBelowMinTx) {
-        amountMetaText.textContent = `Amount is below ${formatLimit(MIN_TX_LIMIT)} minimum per transaction`;
+        const minLimit = isRequestPayment ? minAmountForRequest : MIN_TX_LIMIT;
+        amountMetaText.textContent = `Amount is below ${formatLimit(minLimit)} minimum per transaction`;
       } else if (amountOverPerTx) {
         amountMetaText.textContent = `Amount exceeds ${formatLimit(PER_TX_LIMIT)} maximum per transaction`;
       } else {
-        amountMetaText.textContent = `Min/max per transaction ${formatLimit(MIN_TX_LIMIT)} - ${formatLimit(PER_TX_LIMIT)}`;
+        const minLimit = isRequestPayment ? minAmountForRequest : MIN_TX_LIMIT;
+        amountMetaText.textContent = `Min/max per transaction ${formatLimit(minLimit)} - ${formatLimit(PER_TX_LIMIT)}`;
       }
     }
     // Inline error for amount exceeding selected account balance (consider payer fee share)
@@ -1968,7 +2018,7 @@ function initSendPayment() {
       const amountInput = document.getElementById('amount');
       const rawAmt = (amountInput?.value || '').replace(/,/g, '');
       const amount = parseFloat(rawAmt) || 0;
-      const feeRate = 0.01;
+      const feeRate = getFeeRate();
       // Fee mode
       const feeSel = Array.from(document.querySelectorAll('input[type="radio"][name="fee"]')).find(r => r.checked)?.value || 'you';
       let payerRate = 0, receiverRate = 0;
@@ -1979,9 +2029,16 @@ function initSendPayment() {
       const payerCurrency = Array.from(document.querySelectorAll('input[type="radio"][name="deduct"]')).find(r => r.checked)?.value || 'USD';
       const payeeCurrency = 'USD';
       // Calculate fees with minimum fee logic
-      const { payerFee, receiverFee, isBelowMinimum, actualServiceFee } = calculateFees(amount, payerRate, receiverRate);
-      const youPay = amount + payerFee;
-      const payeeGets = amount - receiverFee;
+      const { payerFee, receiverFee, isBelowMinimum, actualServiceFee } = calculateFees(amount, payerRate, receiverRate, feeRate);
+      // For request-payment: logic is inverted (you receive, customer pays)
+      // For send-payment: you pay, receiver gets
+      const isRequestPayment = window.location.pathname.includes('request-payment');
+      const youPay = isRequestPayment ? amount + receiverFee : amount + payerFee; // Customer pays (request) or You pay (send)
+      let payeeGets = isRequestPayment ? amount - payerFee : amount - receiverFee; // You receive (request) or Receiver gets (send)
+      // Prevent "You receive" from going negative (clamp to 0)
+      if (isRequestPayment && payeeGets < 0) {
+        payeeGets = 0;
+      }
       const fmt = (v, cur) => `${Number(v||0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${cur}`;
       // Nature/Purpose labels
       const natureSel = document.getElementById('nature');
@@ -2083,7 +2140,10 @@ function initSendPayment() {
         document.body.classList.add('modal-locked');
       } catch (_) {}
     }
-    setTimeout(() => { window.location.href = 'review-payment.html'; }, 600);
+    // Determine redirect URL based on current page
+    const isRequestPayment = window.location.pathname.includes('request-payment');
+    const reviewUrl = isRequestPayment ? 'review-payment-request.html' : 'review-payment.html';
+    setTimeout(() => { window.location.href = reviewUrl; }, 600);
   };
   // Review payment navigation (button is outside <form>)
   const confirmTrigger = document.getElementById('confirm-send');
@@ -2274,7 +2334,7 @@ if (document.readyState === 'loading') {
           const amountInput = document.getElementById('amount');
           const rawAmt = (amountInput?.value || '').replace(/,/g, '');
           const amount = parseFloat(rawAmt) || 0;
-          const feeRate = 0.01;
+          const feeRate = getFeeRate();
           // Fee mode
           const feeSel = Array.from(document.querySelectorAll('input[type="radio"][name="fee"]')).find(r => r.checked)?.value || 'you';
           let payerRate = 0, receiverRate = 0;
@@ -2285,9 +2345,16 @@ if (document.readyState === 'loading') {
           const payerCurrency = Array.from(document.querySelectorAll('input[type="radio"][name="deduct"]')).find(r => r.checked)?.value || 'USD';
           const payeeCurrency = 'USD';
           // Calculate fees with minimum fee logic
-          const { payerFee, receiverFee, isBelowMinimum } = calculateFees(amount, payerRate, receiverRate);
-          const youPay = amount + payerFee;
-          const payeeGets = amount - receiverFee;
+          const { payerFee, receiverFee, isBelowMinimum } = calculateFees(amount, payerRate, receiverRate, feeRate);
+          // For request-payment: logic is inverted (you receive, customer pays)
+          // For send-payment: you pay, receiver gets
+          const isRequestPayment = window.location.pathname.includes('request-payment');
+          const youPay = isRequestPayment ? amount + receiverFee : amount + payerFee; // Customer pays (request) or You pay (send)
+          let payeeGets = isRequestPayment ? amount - payerFee : amount - receiverFee; // You receive (request) or Receiver gets (send)
+          // Prevent "You receive" from going negative (clamp to 0)
+          if (isRequestPayment && payeeGets < 0) {
+            payeeGets = 0;
+          }
           const fmt = (v, cur) => `${Number(v||0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${cur}`;
       const data = {
             receiverName: (getText('.summary-recipient .recipient-select__title') || '').replace(/^To\s+/i,''),
