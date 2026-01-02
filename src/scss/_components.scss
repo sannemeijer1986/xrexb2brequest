@@ -681,15 +681,17 @@
 
 // Loading modal
 .modal.modal-loading { align-items: center !important; justify-content: center !important; }
-.modal-loading .modal-wrapper { width: calc(100% - 32px); max-width: 280px;  height: 240px; }
+.modal-loading .modal-wrapper { width: calc(100% - 32px); max-width: 280px;  height: auto; }
 .modal-loading .modal-content {
-  background: #fff;
-  box-shadow: 0 12px 32px rgba(15,23,42,0.18);
-  border-radius: 16px;
-  padding: 24px 28px;
-  height: 240px;
-  display: grid;
-  place-items: center;
+  background: #F8F8F8;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 24px 20px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 .loading-spinner {
   display: grid;
@@ -697,12 +699,37 @@
   width: 96px;
   height: 96px;
   border-radius: 9999px;
-  background: transparent;
-  border: 1px solid $border-color;
+  background: #fff;
+  border: 1px solid #EEEEEE;
+  padding: 32px;
 }
 .loading-spinner img {
   width: 40px; height: 40px; display: block;
   animation: spin 0.9s linear infinite;
+}
+.loading-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+.loading-text__title {
+  font-family: $font-family-sans;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 100%;
+  color: $text-primary;
+  margin: 0;
+}
+.loading-text__message {
+  font-family: $font-family-sans;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 23px;
+  color: $text-primary;
+  margin: 0;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes spin {
@@ -815,47 +842,58 @@
 // Ensure loading modal keeps card style on mobile/tablet (override full-screen modal rules)
 @media (max-width: ($bp-desktop - 1px)) {
   .modal-loading .modal-content {
-    border-radius: 16px;
-    height: auto;
-    max-height: none;
+    border-radius: 0;
+    height: 100%;
+    max-height: 100vh;
+    padding: 24px 20px;
+    justify-content: center;
   }
   .modal-loading .modal-wrapper {
-    width: auto;
-    max-width: 280px;
-    height: auto;
+    width: 100%;
+    max-width: none;
+    height: 100%;
   }
   .modal-loading {
-    align-items: center !important;
-    justify-content: center !important;
-  }
-}
-
-// Desktop sizing for loading card (mimic temp_xrextgbot)
-@media (min-width: $bp-desktop) {
-  .modal-loading .modal-wrapper {
-    max-width: none;
-    width: 480px;
-    height: 240px;
-  }
-  .modal-loading .modal-content {
-    padding: 0;
-    height: 240px;
-    min-height: 240px; // override any generic min-height
+    align-items: stretch !important;
+    justify-content: stretch !important;
   }
   .modal-loading .loading-spinner {
-    width: 140px; height: 140px;
+    width: 140px;
+    height: 140px;
+    padding: 32px;
   }
   .modal-loading .loading-spinner img {
-    width: 76px; height: 76px;
+    width: 76px;
+    height: 76px;
   }
 }
 
-// Ensure loader overrides ANY generic desktop min-height rules (place after them)
+// Desktop sizing for loading card
 @media (min-width: $bp-desktop) {
-  .modal.modal-loading .modal-wrapper,
-  .modal.modal-loading .modal-content {
-    min-height: 240px !important;
-    height: 240px !important;
+  .modal-loading .modal-wrapper {
+    max-width: 580px;
+    width: 580px;
+    height: auto;
+    min-height: auto !important; // Override the 500px min-height rule
+  }
+  .modal-loading .modal-content {
+    background: #fff;
+    border: 1px solid #EEEEEE;
+    border-radius: 16px;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+    padding: 48px 32px;
+    height: auto;
+    min-height: auto !important; // Override the 500px min-height rule
+    gap: 32px;
+  }
+  .modal-loading .loading-spinner {
+    width: 140px;
+    height: 140px;
+    padding: 32px;
+  }
+  .modal-loading .loading-spinner img {
+    width: 76px;
+    height: 76px;
   }
 }
 // Modal text and link styles

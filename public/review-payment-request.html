@@ -113,6 +113,10 @@
             <span class="muted">Message to beneficiary</span>
             <strong id="docNotesVal">-</strong>
           </div>
+          <div class="receipt__row" id="expiresAfterRow">
+            <span class="muted">Payment request expires after</span>
+            <strong id="expiresAfterVal">1 week</strong>
+          </div>
         </div>
         </div>
 
@@ -281,6 +285,10 @@
           <div class="loading-spinner" aria-live="polite" aria-label="Loading">
             <img src="assets/loader.svg" alt="" />
           </div>
+          <div class="loading-text">
+            <p class="loading-text__title">Processing...</p>
+            <p class="loading-text__message">Please do not close or refresh this page</p>
+          </div>
         </div>
       </div>
     </div>
@@ -308,6 +316,7 @@
           docNumLabel: 'Proforma invoice number',
           docNumber: 'PI-001234',
           docNotes: '- -',
+          expiresAfter: '1 week',
           nature: 'Pre-shipment advance',
           purpose: 'Goods purchase',
           feePct: '1.00%',
@@ -401,6 +410,14 @@
               } else {
                 el.classList.remove('is-placeholder');
               }
+            }
+          })();
+          // Payment request expires after
+          (function () {
+            var el = document.getElementById('expiresAfterVal');
+            if (el) {
+              var val = (d.expiresAfter || '1 week').trim();
+              el.textContent = val;
             }
           })();
           set('amtPayable', d.amountPayableFmt || '');
@@ -503,25 +520,23 @@
         if (!btn) return;
         btn.addEventListener('click', (e) => {
           e.preventDefault();
-          const modal = document.getElementById('confirmPaymentModal');
-          if (!modal) return;
-          modal.setAttribute('aria-hidden', 'false');
-          document.documentElement.classList.add('modal-open');
-          document.body.classList.add('modal-open');
-
-          // Reset and autofocus 2FA input on open
-          const input = document.getElementById('unlinkCodeInput');
-          const clearBtn = document.getElementById('unlinkClearBtn');
-          if (input) {
-            input.value = '';
-            // Trigger the same validation logic as typing
-            const ev = new Event('input', { bubbles: true });
-            input.dispatchEvent(ev);
-            // Hide clear button until user types again
-            if (clearBtn) clearBtn.classList.add('is-hidden');
-            // Focus the field for immediate entry
-            input.focus();
+          // Skip 2FA modal and go directly to loading indicator
+          const loading = document.getElementById('loadingModal');
+          if (loading) {
+            loading.setAttribute('aria-hidden', 'false');
+            document.documentElement.classList.add('modal-open');
+            document.body.classList.add('modal-open');
+            try {
+              const y = window.scrollY || window.pageYOffset || 0;
+              document.body.dataset.scrollY = String(y);
+              document.body.style.top = `-${y}px`;
+              document.body.classList.add('modal-locked');
+            } catch (_) {}
           }
+          // Redirect after 2 seconds (same as after 2FA confirmation)
+          setTimeout(() => {
+            window.location.href = 'payment-request-link-ready.html';
+          }, 2000);
         });
       })();
       (function wireConvertDetails() {

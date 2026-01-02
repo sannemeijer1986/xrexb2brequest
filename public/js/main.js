@@ -2127,6 +2127,7 @@ function initSendPayment() {
         docNumLabel,
         docNumber,
         docNotes,
+        expiresAfter: isRequestPayment ? (document.getElementById('expiresAfter')?.value || '1 week') : undefined,
         attachedDocs: attached.join(', '),
         docsDetail,
         paymentId,
@@ -2900,7 +2901,10 @@ if (document.readyState === 'loading') {
     const DESKTOP_BP = 1280;
     if (window.innerWidth < DESKTOP_BP) {
       e.preventDefault();
-      window.location.href = 'send-payment.html';
+      // Determine redirect URL based on current page
+      const isRequestPayment = window.location.pathname.includes('review-payment-request');
+      const backUrl = isRequestPayment ? 'request-payment.html' : 'send-payment.html';
+      window.location.href = backUrl;
     }
   };
   crumb.addEventListener('click', handleBack);
