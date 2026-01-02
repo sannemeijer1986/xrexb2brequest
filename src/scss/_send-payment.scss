@@ -2465,7 +2465,6 @@ bottom: 96px !important;
     font-size: 18px;
     font-weight: 700;
     color: $text-primary;
-    line-height: 1;
     margin: 0 0 32px 0;
     
     @media (max-width: ($bp-desktop - 1px)) {
@@ -2504,12 +2503,12 @@ bottom: 96px !important;
   }
   
   .payment-methods-modal__options {
-    background: #F8F8F8;
+    background: #FCFCFC;
     border-radius: 8px;
-    padding: 12px;
+    padding: 0 16px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 0;
     
     @media (max-width: ($bp-desktop - 1px)) {
       background: #FCFCFC;
@@ -2519,14 +2518,38 @@ bottom: 96px !important;
   .payment-methods-modal__option {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 4px 0;
+    gap: 12px;
+    height: 72px;
+    padding: 0;
+  }
+  
+  .payment-methods-modal__divider {
+    height: 1px;
+    background: #EEEEEE;
+    margin: 0;
+    flex-shrink: 0;
+  }
+  
+  .payment-methods-modal__icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #EEEEEE;
+    border-radius: 50%;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    
+    @media (max-width: ($bp-desktop - 1px)) {
+      width: 36px;
+      height: 36px;
+    }
   }
   
   .payment-methods-modal__icon {
     width: 24px;
     height: 24px;
-    flex-shrink: 0;
     
     @media (max-width: ($bp-desktop - 1px)) {
       width: 20px;
@@ -2537,8 +2560,12 @@ bottom: 96px !important;
   .payment-methods-modal__option-content {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 8px;
     flex: 1;
+
+    @media (max-width: ($bp-desktop - 1px)) {
+      gap: 6px;
+    }
   }
   
   .payment-methods-modal__option-title {
@@ -2550,7 +2577,7 @@ bottom: 96px !important;
     margin: 0;
     
     @media (max-width: ($bp-desktop - 1px)) {
-      font-size: 14px;
+      font-size: 16px;
     }
   }
   
@@ -2568,16 +2595,32 @@ bottom: 96px !important;
     align-items: center;
     justify-content: center;
     padding: 0;
-    margin: 0;
+    margin: 12px 0px;
     
-    svg {
+  }
+  
+  .payment-methods-modal__arrow-wrapper {
+    width: 40px;
+    height: 40px;
+    border: 1px solid $text-primary;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    @media (max-width: ($bp-desktop - 1px)) {
       width: 32px;
       height: 32px;
-      
-      @media (max-width: ($bp-desktop - 1px)) {
-        width: 24px;
-        height: 24px;
-      }
+    }
+  }
+  
+  .payment-methods-modal__arrow-icon {
+    width: 24px;
+    height: 24px;
+    
+    @media (max-width: ($bp-desktop - 1px)) {
+      width: 20px;
+      height: 20px;
     }
   }
   
