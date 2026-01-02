@@ -795,6 +795,93 @@
   color: $text-primary;
 }
 
+// Payment methods info section
+.payment-methods-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 20px;
+  
+  &__row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    
+    @media (max-width: ($bp-desktop - 1px)) {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+  
+  &__label {
+    font-family: $font-family-sans;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-secondary;
+    line-height: 1.4;
+    flex: 1 0 0;
+    
+    @media (max-width: ($bp-desktop - 1px)) {
+      font-size: 12px;
+    }
+  }
+  
+  &__value {
+    font-family: $font-family-sans;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-primary;
+    line-height: 1.4;
+    text-align: right;
+    
+    @media (max-width: ($bp-desktop - 1px)) {
+      text-align: left;
+    }
+    
+    &--currency {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      justify-content: flex-end;
+      
+      @media (max-width: ($bp-desktop - 1px)) {
+        justify-content: flex-start;
+      }
+    }
+  }
+  
+  &__icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    
+    @media (max-width: ($bp-desktop - 1px)) {
+      width: 16px;
+      height: 16px;
+    }
+  }
+  
+  &__link {
+    font-family: $font-family-sans;
+    font-size: 12px;
+    font-weight: 600;
+    color: #336AFF;
+    text-decoration: none;
+    text-align: right;
+    line-height: 1.4;
+    
+    @media (max-width: ($bp-desktop - 1px)) {
+      text-align: left;
+      padding-bottom: 8px;
+    }
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 // Review Payment page styles moved to _review-payment.scss
 
 // Payment submitted page CTA layout

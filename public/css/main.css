@@ -4705,6 +4705,91 @@ body.modal-locked {
   color: #0f172a;
 }
 
+.payment-methods-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 20px;
+}
+.payment-methods-info__row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+@media (max-width: 1279px) {
+  .payment-methods-info__row {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+.payment-methods-info__label {
+  font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #797A7B;
+  line-height: 1.4;
+  flex: 1 0 0;
+}
+@media (max-width: 1279px) {
+  .payment-methods-info__label {
+    font-size: 12px;
+  }
+}
+.payment-methods-info__value {
+  font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.4;
+  text-align: right;
+}
+@media (max-width: 1279px) {
+  .payment-methods-info__value {
+    text-align: left;
+  }
+}
+.payment-methods-info__value--currency {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+}
+@media (max-width: 1279px) {
+  .payment-methods-info__value--currency {
+    justify-content: flex-start;
+  }
+}
+.payment-methods-info__icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+@media (max-width: 1279px) {
+  .payment-methods-info__icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+.payment-methods-info__link {
+  font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #336AFF;
+  text-decoration: none;
+  text-align: right;
+  line-height: 1.4;
+}
+@media (max-width: 1279px) {
+  .payment-methods-info__link {
+    text-align: left;
+    padding-bottom: 8px;
+  }
+}
+.payment-methods-info__link:hover {
+  text-decoration: underline;
+}
+
 .page--receipt .receipt__subtitle {
   text-align: center;
   color: #0f172a;

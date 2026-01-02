@@ -787,7 +787,7 @@ function initSendPayment() {
       if (window.sessionStorage) {
         target = window.sessionStorage.getItem(key);
       }
-      var href = 'select-counterparty.html';
+      var href = 'select-customer.html';
       if (target === 'index') href = 'index.html';
       if (target === 'settings') href = 'settings.html?view=content&page=banks';
       backLink.setAttribute('href', href);
@@ -2765,7 +2765,7 @@ if (document.readyState === 'loading') {
   // Determine back target from stored entrypoint (default: select-counterparty)
   (function initSendBackLink() {
     try {
-      var href = 'select-counterparty.html';
+      var href = 'select-customer.html';
       if (window.sessionStorage && typeof SEND_PAYMENT_RETURN_KEY !== 'undefined') {
         var from = window.sessionStorage.getItem(SEND_PAYMENT_RETURN_KEY);
         if (from === 'cp-detail') href = 'counterparty-bank-details.html';
