@@ -256,18 +256,56 @@ try {
       });
     };
 
-    // Set date when state becomes 2
-    const handleStateChange = (state) => {
+    // Update dropdown content based on state
+    const updateDropdownContent = (state) => {
+      const titleEl = dropdown.querySelector('.header__request-dropdown__title');
+      const statusEl = dropdown.querySelector('.header__request-dropdown__item-status');
+      const amountEl = dropdown.querySelector('.header__request-dropdown__item-amount');
+      
       if (state === 2) {
-        updateRequestDates();
+        // Customer invitation requests
+        if (titleEl) titleEl.textContent = 'Customer invitation requests';
+        if (statusEl) statusEl.textContent = 'Awaiting response';
+        // Hide payment amount at state 2
+        if (amountEl) amountEl.style.display = 'none';
+      } else if (state === 4) {
+        // Payment requests
+        if (titleEl) titleEl.textContent = 'Payment requests';
+        if (statusEl) statusEl.textContent = 'Awaiting payment';
+        // Show and populate payment amount at state 4
+        if (amountEl) {
+          amountEl.style.display = 'block';
+          // Get payment amount from receiptData
+          try {
+            const raw = window.sessionStorage && window.sessionStorage.getItem('receiptData');
+            if (raw) {
+              const data = JSON.parse(raw);
+              const amount = data.amountPayableFmt || data.toBeDeducted || '-';
+              amountEl.textContent = amount;
+            } else {
+              amountEl.textContent = '-';
+            }
+          } catch (_) {
+            amountEl.textContent = '-';
+          }
+        }
       }
     };
 
-    // Check initial state and set date if already at state 2
+    // Set date and update content when state becomes 2 or 4
+    const handleStateChange = (state) => {
+      if (state === 2 || state === 4) {
+        updateRequestDates();
+        updateDropdownContent(state);
+      }
+    };
+
+    // Check initial state and update if already at state 2 or 4
     if (typeof getPrototypeState === 'function') {
       const currentState = getPrototypeState();
-      if (currentState === 2) {
+      if (currentState === 2 || currentState === 4) {
         updateRequestDates();
+        updateDropdownContent(currentState);
       }
       // Listen for state changes
       if (typeof onPrototypeStateChange === 'function') {

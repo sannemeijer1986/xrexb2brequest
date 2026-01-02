@@ -227,7 +227,8 @@ html {
   }
 }
 
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -246,28 +247,34 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   color: #3F78FF;
   transition: opacity 0.15s ease;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn img {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn img,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn img {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-btn__text {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-btn__text,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-btn__text {
   white-space: nowrap;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-btn__badge {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-btn__badge,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-btn__badge {
   display: none;
 }
 @media (max-width: 1279px) {
-  html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn {
+  html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn,
+  html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn {
     width: 32px;
     height: 32px;
     padding: 0;
     gap: 0;
   }
-  html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-btn__text {
+  html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-btn__text,
+  html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-btn__text {
     display: none;
   }
-  html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-btn__badge {
+  html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-btn__badge,
+  html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-btn__badge {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -285,7 +292,8 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
     line-height: 1;
   }
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown {
   display: none;
   position: absolute;
   top: calc(100% + 8px);
@@ -305,11 +313,13 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   padding: 20px;
 }
 @media (min-width: 1280px) {
-  html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown.is-open {
+  html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown.is-open,
+  html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown.is-open {
     display: flex;
   }
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__banner {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__banner,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__banner {
   padding: 8px;
   background: rgba(77, 136, 255, 0.15);
   border-bottom: none;
@@ -323,7 +333,8 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   color: #4d88ff;
   border-radius: 8px;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__banner .header__request-dropdown__banner-icon {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__banner .header__request-dropdown__banner-icon,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__banner .header__request-dropdown__banner-icon {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
@@ -331,14 +342,16 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   background: url("../assets/icon_info_blue.svg") no-repeat center;
   background-size: 16px 16px;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__content {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__content,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__content {
   display: flex;
   flex-direction: column;
   gap: 16px;
   width: 100%;
   align-items: flex-start;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__title {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__title,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__title {
   font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   font-weight: 600;
   font-size: 14px;
@@ -346,7 +359,8 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   margin: 0;
   line-height: 1;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__list {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__list,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -357,7 +371,8 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   gap: 4px;
   min-height: 108px;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__item {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -371,13 +386,15 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   align-items: flex-start;
   justify-content: flex-start;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-row {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-row,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__item-row {
   display: flex;
   align-items: center;
   gap: 4px;
   width: 100%;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-icon {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-icon,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__item-icon {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
@@ -387,12 +404,14 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   background: #EEEEEE;
   border-radius: 16px;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-icon img {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-icon img,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__item-icon img {
   width: 10px;
   height: 10px;
   display: block;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-content {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-content,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__item-content {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -400,7 +419,8 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   flex-direction: column;
   gap: 4px;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-name {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-name,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__item-name {
   font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   font-weight: 600;
   font-size: 12px;
@@ -411,7 +431,8 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-status {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-status,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__item-status {
   font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   font-weight: 600;
   font-size: 14px;
@@ -419,7 +440,17 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   margin: 0;
   line-height: 1;
 }
-html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-date {
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-amount,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__item-amount {
+  font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: #2d2f2f;
+  margin: 3px 0;
+  line-height: 1;
+}
+html[data-prototype-state=state-2] .site-header .header__actions .header__request-btn .header__request-dropdown__item-date,
+html[data-prototype-state=state-4] .site-header .header__actions .header__request-btn .header__request-dropdown__item-date {
   font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   font-weight: 400;
   font-size: 12px;
@@ -427,6 +458,11 @@ html[data-prototype-state=state-2] .site-header .header__actions .header__reques
   margin: 0;
   margin-top: auto;
   line-height: 1;
+}
+
+html[data-prototype-state=state-4] .header__request-dropdown__item {
+  height: 140px;
+  min-height: 140px;
 }
 
 /* Floating build badge */
