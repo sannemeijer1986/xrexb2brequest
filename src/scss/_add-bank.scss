@@ -412,6 +412,35 @@
 
   // Customer submitted page specific styles
   &.page--customer-submitted {
+    .cp-submitted__header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .cp-submitted__asset {
+      width: 68px;
+      height: 30px;
+      display: block;
+
+      @media (min-width: $bp-desktop) {
+        width: 85px;
+        height: 35px;
+      }
+    }
+
+    .cp-submitted__asset-divider {
+      width: 68px;
+      height: 1px;
+      background: $border-color;
+      margin-top: 0;
+
+      @media (min-width: $bp-desktop) {
+        width: 85px;
+      }
+    }
+
     .cp-submitted__title {
       @media (max-width: ($bp-desktop - 1px)) {
         font-size: 26px;
