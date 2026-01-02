@@ -2491,14 +2491,14 @@ bottom: 96px !important;
   
   .payment-methods-modal__label {
     font-family: $font-family-sans;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     color: $text-primary;
     line-height: 1;
-    margin: 0;
+    margin: 6px 0px 4px 0px;
     
     @media (max-width: ($bp-desktop - 1px)) {
-      font-size: 12px;
+      font-size: 14px;
     }
   }
   
@@ -2595,7 +2595,7 @@ bottom: 96px !important;
     align-items: center;
     justify-content: center;
     padding: 0;
-    margin: 12px 0px;
+    margin: 12px 0px 6px 0px;
     
   }
   
