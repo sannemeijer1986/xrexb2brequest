@@ -301,6 +301,25 @@ try {
       }
     };
 
+    // Add click handler to dropdown items for navigation
+    const item = dropdown.querySelector('.header__request-dropdown__item');
+    if (item) {
+      item.style.cursor = 'pointer';
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        try {
+          if (typeof getPrototypeState === 'function') {
+            const state = getPrototypeState();
+            if (state === 2) {
+              window.location.href = 'customer-details.html';
+            } else if (state === 4) {
+              window.location.href = 'payment-request-details.html';
+            }
+          }
+        } catch (_) {}
+      });
+    }
+
     // Check initial state and update if already at state 2 or 4
     if (typeof getPrototypeState === 'function') {
       const currentState = getPrototypeState();
@@ -3098,7 +3117,7 @@ if (document.readyState === 'loading') {
     }
     const label = scenario && scenario.title ? scenario.title : 'Unknown error';
     if (titleEl) {
-      titleEl.textContent = 'Payment failed: No charge applied';
+      titleEl.textContent = 'Failed to create payment request';
     }
     if (messageEl) {
       const baseMessage = (scenario && scenario.inlineMessage) || REVIEW_INLINE_ERROR_DEFAULT;
@@ -3140,10 +3159,11 @@ if (document.readyState === 'loading') {
     if (!scenario) return;
     applyInlineError(scenario);
     setPrimaryDisabled(!!scenario.disablePrimary);
-    const snackbarText = scenario.snackbar || REVIEW_SNACKBAR_FALLBACK;
-    if (typeof window.showSnackbar === 'function') {
-      window.showSnackbar(snackbarText, 4000, 'error');
-    }
+    // Snackbar disabled for error simulation
+    // const snackbarText = scenario.snackbar || REVIEW_SNACKBAR_FALLBACK;
+    // if (typeof window.showSnackbar === 'function') {
+    //   window.showSnackbar(snackbarText, 4000, 'error');
+    // }
     if (scenario.alertMessage && scenario.key !== 'kyc-status') {
       try {
         window.alert(scenario.alertMessage);

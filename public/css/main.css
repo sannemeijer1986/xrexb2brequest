@@ -7250,8 +7250,8 @@ body.modal-locked {
 }
 .page--cp-submitted .cp-submitted__title {
   margin: 0;
-  font-family: "Manrope", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
-  font-weight: 600;
+  font-family: "Sora", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  font-weight: 700;
   font-size: 22px;
   color: #0f172a;
   text-align: left;
@@ -7259,7 +7259,7 @@ body.modal-locked {
 @media (min-width: 1280px) {
   .page--cp-submitted .cp-submitted__title {
     font-size: 32px;
-    font-weight: 600;
+    font-weight: 700;
     text-align: left;
   }
 }
@@ -7380,13 +7380,26 @@ body.modal-locked {
   margin-top: 8px;
 }
 @media (max-width: 1279px) {
+  .page--cp-submitted .cp-submitted__actions {
+    flex-direction: column;
+    gap: 16px;
+  }
   .page--cp-submitted .cp-submitted__actions .btn {
     width: 100%;
     height: 52px;
     font-size: 16px;
   }
+  .page--cp-submitted .cp-submitted__actions .btn--primary {
+    order: -1;
+  }
+  .page--cp-submitted .cp-submitted__actions .btn--secondary {
+    order: 1;
+  }
 }
 @media (min-width: 1280px) {
+  .page--cp-submitted .cp-submitted__actions {
+    gap: 16px;
+  }
   .page--cp-submitted .cp-submitted__actions .btn {
     min-width: 160px;
     height: 40px;
